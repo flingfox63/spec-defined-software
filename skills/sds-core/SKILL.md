@@ -1,6 +1,8 @@
 ---
 name: sds
 description: "Apply Spec-Defined Software (SDS) to software changes, audits, refactors, frontend/backend work, database migrations, release automation, and spec/code alignment. Use when a project has specs/, .sds.harness.yaml, or asks for spec-first delivery, zero-drift verification, technical assessment placement, pre-release checks, or SDS self-check maintenance."
+metadata:
+  version: "1.2.1"
 ---
 
 # SDS — Spec-Defined Software (Requirement Delivery Version)
@@ -200,4 +202,4 @@ When tasked with a pure "review", "audit", "diagnose", or "check" assignment, th
 - Read `references/sds-workflow.md` for the detailed lifecycle and verification model.
 - Read `references/sds-playbook.md` when initializing or upgrading a project.
 - Use `templates/spec.template.md`, `templates/design.template.md`, and `templates/harness.yaml` as starting points.
-- Use `skills/sds-core/src/sds/sds_self_check.py` (packaged globally as `sds check`) for cross-platform baseline validation and zero-drift checks.
+- Use the globally packaged `sds check` command for cross-platform baseline validation and zero-drift checks.

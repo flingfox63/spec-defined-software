@@ -22,13 +22,16 @@ The code is merely a compiled artifact of the delivered requirement. By keeping 
 
 ## 🛠️ The SDS Core-Centric Lifecycle Suite
 
-To move away from passive "linting" and support the entire software delivery pipeline, SDS orchestrates multiple specialized agent skills:
+Today, the released `sds-core` skill provides specification validation,
+traceability checks, Git hooks, and MCP access. The specialized lifecycle skills
+below describe the product roadmap; their status in the roadmap table is the
+source of truth for availability:
 
-1. **`sds-ideator` (Demand Phase)**: A Socratic Brainstorming Skill that guides developers in refining fuzzy user requirements into crisp, Gherkin-style Acceptance Criteria.
-2. **`sds-architect` (Design Phase)**: Translates product spec requirements into formal API contracts, DB schema migrations, and technical patterns.
-3. **`sds-coder` (Implementation Phase)**: Spawns isolated coding subagents to implement physical features and unit tests, automatically maintaining `@sds-trace` coverage.
-4. **`sds-qa` (Verification Phase)**: **🧪 The Quality Gatekeeper.** Automatically synthesizes test suites from `spec.md` ACs and connects them back to `user-journey.md` (User Story) flows to achieve complete requirement closure.
-5. **`sds-ops` (Delivery Phase)**: Executes atomic deployments using symlinked environments, manages database migration ledgers, and runs regression smoke checks.
+1. **`sds-ideator` (Demand Phase, in progress)**: Planned Socratic workflows for refining fuzzy requirements into Gherkin-style Acceptance Criteria.
+2. **`sds-architect` (Design Phase, in progress)**: Planned translation of accepted product specs into technical contracts and `design.md`.
+3. **`sds-coder` (Implementation Phase, planned)**: Planned implementation assistance with `@sds-trace` coverage.
+4. **`sds-qa` (Verification Phase, planned)**: Planned AC-driven test synthesis and quality gates.
+5. **`sds-ops` (Delivery Phase, planned)**: Planned atomic deployment and rollback workflows.
 
 ---
 
@@ -42,18 +45,56 @@ Install the CLI tool globally using our one-line installer:
 curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.sh | sh
 ```
 
-### 2. Initialization
+### 2. Install into AI agents and IDEs
+
+Auto-detect installed agents, install the released SDS Agent Skill, and
+configure MCP:
+
+```bash
+sds install-agents
+```
+
+The default is user-scoped and detects agents from their commands,
+applications, extensions, or project-use markers. With no match, SDS installs
+only the shared Skill and does not create agent-specific MCP settings. You can
+select all targets, choose a subset, or keep the integration in one repository:
+
+```bash
+sds install-agents --targets all
+sds install-agents --targets codex,opencode,claude,agy
+sds install-agents --targets cursor --scope project --project-dir /path/to/repo
+```
+
+Supported selectors are `shared`, `codex`, `opencode`, `claude`, `cursor`, `cline`,
+`antigravity` (`agy`), `gemini`, `copilot` (`vscode`), `windsurf`, `roo`, and
+`kilo`. SDS follows the Agent Skills directory convention. Installation is
+idempotent: agents that support `.agents/skills` share one SDS bundle, while
+agent-specific copies are used only where required. Managed markers record the
+Skill bundle version and content hash, so older bundles update in place without
+creating duplicates. Existing non-SDS skills, MCP servers, and settings are
+preserved. Use `--no-mcp` for skill-only installation or `--dry-run` to preview
+changes. `sds version` reports the CLI, harness, and Skill bundle versions
+separately.
+
+### 3. Initialization
 Run the initialization scaffold in the root of your project directory:
 ```bash
 sds init
 ```
 This generates the `.sds.harness.yaml` config and sets up the standard `specs/` directory layout.
 
-### 3. Run Verification Checks
+### 4. Run Verification Checks
 Verify your repository structure, code annotations, and check for spec-to-code drift:
 ```bash
 sds check
 ```
+
+### Optional manual MCP troubleshooting
+
+Automatic MCP configuration is enabled by default. If a client cannot find the
+CLI, re-run `sds install-agents --command /absolute/path/to/sds`; use
+`--no-mcp` if you prefer to manage MCP yourself. A manual stdio entry uses
+`sds` as the command and `["mcp"]` as its arguments.
 
 ## 🗺️ Ecosystem Roadmap
 
@@ -75,4 +116,6 @@ Spec-Defined Software (SDS) is proud of its roots and is heavily inspired by and
 ---
 
 > [!NOTE]
-> SDS is fully compatible with modern Multi-Agent orchestration frameworks and MCP protocols, giving your AI coding assistant native tools to read, update, and test specs.
+> The released `sds-core` skill integrates with the supported Agent Skills and
+> MCP environments listed above. Lifecycle skills marked in progress or planned
+> are not installed until they ship.

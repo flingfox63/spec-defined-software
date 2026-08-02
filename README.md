@@ -74,6 +74,26 @@ curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/ma
 irm https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.ps1 | iex
 ```
 
+The one-click installer also installs the released SDS Agent Skill for supported
+agents and IDEs, and configures MCP where the client has a writable config
+format. You can rerun that step independently with:
+
+```bash
+sds install-agents
+```
+
+The default is `--targets detected --scope user`: SDS looks for installed agent
+commands, applications, extensions, and project-use markers, then configures
+only the agents it can identify. If no agent is detected, it installs only the
+shared Agent Skill and does not create agent-specific MCP settings. Use
+`--targets all` for every supported integration. Agents that discover
+`.agents/skills` share one SDS bundle; agent-specific copies are created only
+where the selected scope requires them. Use `--scope project --project-dir
+PATH` when the integration should belong to one repository instead. Cline uses
+`.cline/skills`; Windsurf uses the shared `.agents/skills` bundle. Canonical
+SDS-only MCP entries follow an upgraded executable path automatically, while
+customized entries remain preserved.
+
 ---
 
 ## 🛠️ Command Line Reference
@@ -82,28 +102,63 @@ Once installed, the `sds` command suite is available globally:
 
 * **`sds init`**: Scaffolds a new SDS directory workspace in the active folder, adding the `.sds.harness.yaml` configuration and `specs/` blueprint subfolders.
 * **`sds check`**: Runs standard compliance and spec-to-code drift checking.
+* **`sds install-agents`**: Detects installed agents, installs the released SDS Agent Skill, and configures the matching SDS MCP entries.
 * **`sds mcp`**: Spawns a 100% standard-compliant stdio Model Context Protocol (MCP) JSON-RPC server for IDE-integrated AI assistants.
-* **`sds version`**: Prints current CLI engine version.
+* **`sds version`**: Prints the CLI, harness, and released Skill bundle versions separately.
 
 ---
 
-## 🤖 AI Agent Integration (MCP)
+## 🤖 AI Agent Integration (Agent Skills + MCP)
 
-To connect your IDE AI assistant (such as VS Code Cline, Cursor, or Claude Desktop) directly to your SDS validator, add this configuration block to your client's settings:
+SDS uses the open Agent Skills directory convention and supports user- or
+project-scoped installation for:
+
+`shared`, `codex`, `opencode`, `claude`, `cursor`, `cline`, `antigravity` (`agy`),
+`gemini`, `copilot` (`vscode`), `windsurf`, `roo`, and `kilo`.
+
+Auto-detect installed agents, select every supported target explicitly, or
+choose a comma-separated subset:
+
+```bash
+sds install-agents
+sds install-agents --targets all
+sds install-agents --targets codex,claude,agy
+sds install-agents --targets cursor --scope project --project-dir /path/to/repo
+```
+
+The operation is idempotent. Each managed Skill records a semantic bundle
+version and exact content hash. Re-running it keeps matching content unchanged,
+updates an older managed bundle in place, and refreshes legacy markers without
+duplicating Skill content. Earlier unmodified SDS-managed copies in superseded
+agent-specific directories are removed; user-owned or locally modified copies
+are preserved. Unrelated skills, servers, and settings are also preserved. It
+installs only released skills currently included in the package; roadmap skills
+such as `sds-ideator` and `sds-coder` are not presented as available before they
+ship.
+
+Useful options include `--command PATH` to record a specific SDS executable,
+`--no-mcp` to install only the Agent Skill, `--force` to replace SDS-managed
+content, and `--dry-run` to preview changes.
+
+Manual MCP setup is therefore optional. If automatic configuration is not
+supported by a particular client, or you are troubleshooting executable
+discovery, add the following entry to that client's MCP settings and restart
+the client:
 
 ```json
 {
   "mcpServers": {
     "sds": {
       "command": "sds",
-      "args": ["mcp"],
-      "disabled": false
+      "args": ["mcp"]
     }
   }
 }
 ```
 
-This gives your AI assistant instant access to high-precision structural JSON checks in the background.
+If the client cannot find `sds`, replace `"command": "sds"` with the absolute
+path reported by `which sds` (macOS/Linux) or `Get-Command sds` (PowerShell), or
+re-run `sds install-agents --command /absolute/path/to/sds`.
 
 ---
 
