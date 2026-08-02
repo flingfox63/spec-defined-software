@@ -16,9 +16,12 @@ Fuzzy, qualitative requests must be distilled into concrete business value and m
 * **When**: The action or transaction triggered by the user.
 * **Then**: The observable outcome, state transitions, or side effects.
 
-### Stage 2: Draft Contracts
-* Product-oriented inputs/outputs must be declared conceptually in `spec.md` (no physical camelCase keys, ports, or protocol details).
-* Technical details, mappings, database schemas, API structures, and indexes must be declared separately in `design.md`.
+### Stage 2: Draft Contracts & Human Acceptance
+* **The Drafting Kitchen**: Conceptual specifications and technical designs are initially drafted as proposals inside `specs_review/` (a temporary, gitignored scratch directory).
+* **The Acceptance Gate**: A specification is officially **Accepted** once the human user/product manager explicitly approves the draft. Upon acceptance, the files are promoted (moved) into the authoritative, git-tracked `specs/` directory as `spec.md` and `design.md`. 
+* **The Division of Labor**:
+  * Product-oriented inputs/outputs must be declared conceptually in `spec.md` (no physical camelCase keys, ports, or protocol details).
+  * Technical details, mappings, database schemas, API structures, and indexes must be declared separately in `design.md`.
 
 ### Stage 3: Implement & Trace
 When writing physical code or tests, developers (or AI subagents) must place traceability comments linking back to specific spec ACs:
@@ -42,6 +45,10 @@ The check engine scans:
 * **Trace matches**: Ensures all ACs declared in `spec.md` have matching `@sds-trace` implementation and test annotations in the repository.
 
 ### Stage 5: Release Guard (Ops)
+> [!NOTE]
+> *This stage is designed to be automated by the upcoming `sds-ops` skill (currently in **Planned** status).*
+> *本阶段旨在由未来的 `sds-ops` 智能体技能包自动化执行（目前处于 **规划中** 状态）。*
+
 Deployments must execute Capistrano-style atomic symlink releases. 
 1. Build code and assets.
 2. Execute local database migrations.

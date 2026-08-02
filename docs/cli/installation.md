@@ -52,15 +52,19 @@ Runs the baseline validation rules over your workspace.
 ```bash
 sds check
 ```
-#### Options:
-* `--module <checker_name>`: Runs only a specific checker. Options are: `directory`, `completeness`, `drift`, `traceability`, `side_effects`.
-* `--verbose`: Outputs fine-grained logs.
 
 ---
 
-### `sds verify`
-Executes both `sds check` and all project-specific regression tests specified in `.sds.harness.yaml`.
+### `sds install-hook`
+Installs the automated git pre-commit hook to prevent changesets from violating spec alignment.
 ```bash
-sds verify
+sds install-hook
 ```
-This is the command that is typically run in CI/CD build environments to prevent code/spec drift.
+
+---
+
+### `sds mcp`
+Launches the Model Context Protocol (MCP) server over standard input/output (stdio), providing full specification context to compatible agent environments.
+```bash
+sds mcp
+```

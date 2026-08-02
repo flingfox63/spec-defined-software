@@ -40,6 +40,7 @@ When given a raw User Scenario (e.g., qualitative user requests or behavioral ne
 
 1. Read the repository instructions (`AGENTS.md` or equivalent), `.sds.harness.yaml`, relevant `_context/`, capability `spec.md`, and accepted `design.md`.
 2. Route the change by the user scenario and ownership boundary, not by the table, implementation file, or current directory. Confirm the capability lives under the owning module, its `capability_id` matches that path, and the module has `_context/`. Put cross-cutting schema/migration/infrastructure design work under a system/ops module.
+   - **System Blueprint & Blurry Boundaries**: The `system-blueprint.md` is a guiding structural map, not a rigid blocker. If it is missing, empty, or placeholder-only (such as in newly initialized projects), the Agent must infer module boundaries based on standard domain-driven design (DDD) nouns or scaffolded folders. If a requested capability crosses multiple module domains, or if its ownership boundaries are blurry, the Agent **MUST NOT make arbitrary architectural assumptions**. It must outline the alternative module placements to the human user in the chat, explain the pros/cons of each, and **stop to ask the user to decide** the capability's ownership boundary.
 3. Classify the request before writing documents:
    - assessment, comparison, audit, proposal, migration plan, execution plan, diagnostics, or test evidence -> `specs_review/`;
    - accepted current behavior/contract (100% Product-Oriented) -> `spec.md`;
@@ -49,6 +50,28 @@ When given a raw User Scenario (e.g., qualitative user requests or behavioral ne
 5. Never link durable files under `specs/` to gitignored `specs_review/` artifacts.
 
 SDS does not impose a plan-first or confirmation-first gate. Create a plan when complexity or repository policy requires one, and request confirmation only when intent, authority, or a material product decision is unresolved.
+
+### Process Intensity & Complexity Thresholds
+
+To prevent both over-engineering on simple fixes and reckless spec-skipping on material modifications, the Agent must classify tasks and apply the following quantified thresholds based on estimated effort (Person-Days / 人天):
+
+1. **Ultra-Lightweight Changes (< 0.5 Person-Days / Simple Typos or Logging Tweaks)**:
+   - *Guideline*: If a task is extremely simple (e.g., fixing a typo, correcting a localized UI margin/label, or adjusting a minor log format string) and does not change any business outcomes, user scenarios, or database schemas.
+   - *Action*: The Agent may directly modify the implementation and test files, adding or updating the `@sds-trace` comments, and bypass full `spec.md` or `design.md` creation/modification.
+2. **Minor Modifications (0.5 to 1.5 Person-Days / Single-Endpoint or Field Adjustments)**:
+   - *Guideline*: If a task involves a minor behavior change (e.g., adding an optional field to an existing API, modifying a simple validation rule, or adding a small UI behavior) but does not alter macro architectures.
+   - *Action*: The Agent **MUST** update `spec.md` and `design.md`. However, to maintain velocity, the Agent may write directly to `specs/` (authoritative) and proceed straight to implementation and testing, skipping the complex `specs_review/` draft-and-promotion phase.
+3. **Major Features & Material Architectural Alterations (> 1.5 Person-Days / New Endpoints or Schema Migrations)**:
+   - *Guideline*: If a task represents a new capability, a database schema migration, a new API endpoint, or an integration that alters state transitions or core business flows.
+   - *Action*: The Agent **MUST** follow the rigid, full-lifecycle SDS delivery workflow (Stage 1 Draft in `specs_review/` -> Present to User for Acceptance -> Promote to `specs/` -> Implement -> Trace -> Verify).
+
+* **The Golden Fallback**: If the complexity tier or estimated person-days are ambiguous, or if you are unsure whether a spec update is required, you **MUST stop and ask the user to clarify the desired process intensity** before touching any file.
+
+### Priority of Overlapping Guidelines & Overrides
+
+When overlapping instructions exist (e.g., `SKILL.md` vs. local `AGENTS.md` or `.sds.harness.yaml`):
+1. **Local project-defined configurations (`.sds.harness.yaml`) and local `AGENTS.md` always take ultimate precedence**, as they contain the authoritative business domain boundaries, specific constraints, and local project conventions.
+2. If any rule in `SKILL.md` conflicts with a local project's rule, the Agent must adhere to the local project's rules, and **must ask the user for confirmation** if the conflict introduces logical risk.
 
 ## Key Project File Constraints & Governance
 
@@ -72,9 +95,12 @@ To prevent information conflicts and keep the repository clean, the SDS layout h
    - Exactly `design.md` (accepted technical implementation, 100% tech-oriented).
    - *No other files allowed here.* Any temporary thoughts, scratchpads, or research must be in `specs_review/`.
 
-4. **Active Governance**:
+4. **Active Governance & Escalation Boundary**:
    - When the agent performs any task, it MUST inspect the `specs/` directory.
-   - If any unauthorized or ad-hoc markdown files are found (e.g., legacy specs, raw notes, or duplicated doc files), the agent must immediately flag them to the user, recommend their removal/consolidation, and merge their valid durable conclusions into the standard files above to avoid information overload or conflicting definitions.
+   - If any unauthorized or ad-hoc markdown files are found (e.g., legacy specs, raw notes, or duplicated doc files), the agent's behavior depends on the task mode:
+     - **In Implementation / Development Mode**: The Agent must immediately flag them to the user, recommend their removal/consolidation, and merge their valid durable conclusions into the standard files above.
+     - **In Pure Review / Audit / Diagnose Mode**: The Agent **MUST NOT** perform any physical merges or modifications under `specs/` or source folders. It must ONLY flag the issue to the user, propose concrete consolidation recommendations in the chat or diagnostics file, and **stop to ask for explicit user permission** before performing any physical file write or merge.
+     - **When in Doubt**: If the task mode or boundaries are ambiguous, the Agent **MUST stop and ask the user for confirmation** rather than arbitrarily executing write operations.
 
 5. **Durable Test Code vs. Verification Evidence**:
    - **Durable Test Code**: All long-term automated test suites (pytest, Jest, unit/integration scripts) must live in the standard physical repository directories (e.g., `tests/` or `<module>/tests/`). They are first-class code assets and must use tracing annotations (`@sds-trace: <capability_id>:AC-n`) to trace back to the spec.
@@ -95,10 +121,11 @@ Update the owning capability spec first. Record implementation choices in `desig
 ## Implement and verify
 
 1. Make the smallest implementation that satisfies the accepted spec.
-2. Add `@sds-trace: <capability_id>:AC-n` at important implementation and test boundaries where the project requires traceability.
+2. Add `@sds-trace: <capability_id>:AC-n` to trace every single defined Acceptance Criterion (`AC-n`) in implementation code and test classes.
+   - **Trace Coverage Standard**: For any capability marked with `status: implemented` or `status: verified`, 100% of its ACs must have matching `@sds-trace` annotations. The check engine strictly enforces this coverage standard; any missing trace annotation will fail the build.
 3. Derive tests from the spec, not from the implementation. Use an independent agent only when the user or repository rules permit delegation; otherwise perform a separate spec-only test-design pass.
 4. Cover happy paths, authorization/data boundaries, invalid input, dependency failure, and retry/recovery where applicable.
-5. Run and validate the project-local self-checker: As an AI Agent, you must execute the project's local `sds_self_check.py` tool in the background to ensure zero-drift, check traceability annotations, and validate directory compliance. If validation fails, parse `specs_review/diagnostics.json`, fix the target files, and rerun.
+5. Run and validate the project-level self-checker: As an AI Agent, you must execute the central `sds check` command in the background to ensure zero-drift, check traceability annotations, and validate directory compliance. If validation fails, parse `specs_review/diagnostics.json`, fix the target files, and rerun.
 6. Run every project verification command declared in `.sds.harness.yaml`. Verify that your code changes pass all linting, static analysis, and automated test suites before delivering the requirement.
 7. Before handoff, inspect the complete diff and working tree for stale files, generated artifacts in source directories, obsolete legacy entrypoints, untracked files, and spec/code drift. Do not present or commit the work unless all checks return 100% success.
 
@@ -108,7 +135,7 @@ To maximize delivery quality and reduce cognitive load, SDS remains fully compat
 - Use **Socratic Brainstorming** to translate raw User Scenarios into Gherkin-style Acceptance Criteria (ACs) in `specs_review/`.
 - Use **Defensive Planning** to break down accepted technical designs (`design.md`) into file-specific execution plans.
 - Use **Subagent-Driven Development (SDD)** to spawn isolated subagents for implementing physical codes and tests, ensuring clean context boundaries.
-- Use **Verification-Before-Completion** loops to execute `sds_self_check.py` and project-level test commands, validating zero-drift.
+- Use **Verification-Before-Completion** loops to execute `sds check` and project-level test commands, validating zero-drift.
 
 ## Artifact locations
 
@@ -118,7 +145,6 @@ project/
 │   └── <module>/                         # Project-specific physical package/code
 ├── tests/                                # Your durable automated test suites (with @sds-trace)
 ├── .sds.harness.yaml
-├── sds_self_check.py
 ├── specs/                                # AUTHORITATIVE CONTRACTS (Tracked in Git)
 │   ├── _context/                         # Global context
 │   │   ├── system-blueprint.md
@@ -143,7 +169,7 @@ project/
         └── verification/                 # temporary evidence, screenshots, logs (no durable test code)
 ```
 
-The project-local `sds_self_check.py` must remain runnable without an installed skill. The skill-owned `scripts/sds_self_check.py` is the upstream bootstrap/reference harness. Run it with `--refresh-harness` to update managed copies. It never overwrites a customized checker; it writes a merge candidate under `specs_review/`.
+The centralized `sds-cli` tool provides standard global `sds check` and `sds init` capabilities. Projects do not need to copy `sds_self_check.py` into their root folder; they only require `.sds.harness.yaml` and the `specs/` folder tree, executing validation globally via `sds check`.
 
 ## Capability spec minimum (100% Product-Oriented)
 
@@ -163,13 +189,15 @@ Every `design.md` must contain:
 - `Detailed API & Class Design`: API endpoints, controllers, services, repositories, and cache strategies.
 - `Data Transition & Migration Design`: Local database migrations, schema version history, backward compatibility mapping, and local rollback SQL scripts (no server deployment steps). This includes technical mechanisms (caching, indexes, queues) used to satisfy the spec's business non-functional budgets.
 
-## Harness capability boundary
+## Safety Guidelines for Read-Only Review Tasks
 
-The bundled harness provides deterministic baseline checks: repository structure, spec headings, artifact placement, coarse change-set drift, trace references, heuristic side-effect scanning, and configured verification commands. It does not inherently prove semantic correctness, complete side-effect safety, visual quality, migration safety, or production health. Those require project tests and environment-specific validation declared by the owning specs.
+When tasked with a pure "review", "audit", "diagnose", or "check" assignment, the Agent MUST NOT modify any source code, specifications, or configurations under `specs/` or project folders. 
+- **The Safe Boundary**: In pure review modes, the Agent is strictly a diagnostic tool. It must only run the linter and write findings into `specs_review/diagnostics.json` or present structured reports in chat.
+- **The Modification Boundary**: Code, spec, or design file additions, deletions, or auto-healing refactors are ONLY permitted when the user explicitly requests implementation, auto-healing, or development work.
 
 ## References
 
 - Read `references/sds-workflow.md` for the detailed lifecycle and verification model.
 - Read `references/sds-playbook.md` when initializing or upgrading a project.
 - Use `templates/spec.template.md`, `templates/design.template.md`, and `templates/harness.yaml` as starting points.
-- Use `scripts/sds_self_check.py` for cross-platform baseline validation and managed-harness refresh.
+- Use `skills/sds-core/src/sds/sds_self_check.py` (packaged globally as `sds check`) for cross-platform baseline validation and zero-drift checks.

@@ -36,5 +36,26 @@ class TestUserAuthLogin(unittest.TestCase):
         payload = token_parts[0]
         self.assertIn("user_id:user-uuid-1111", payload)
 
+    def test_login_audit_triggered(self):
+        # @sds-trace: user_auth.login:AC-4
+        # Verify that AC-4 (Audit trail trigger) is invoked on successful login
+        from unittest.mock import patch
+        with patch("user_auth.send_audit_log") as mock_audit:
+            response, status_code = login("alice", "password123")
+            self.assertEqual(status_code, 200)
+            mock_audit.assert_called_once_with("alice")
+
+    def test_suspended_account_is_denied_without_success_side_effects(self):
+        # @sds-trace: user_auth.login:AC-5
+        from unittest.mock import patch
+        with patch("user_auth.send_audit_log") as mock_audit:
+            response, status_code = login("bob", "password456")
+
+        self.assertEqual(status_code, 403)
+        self.assertFalse(response["success"])
+        self.assertEqual(response["error_code"], "ACCOUNT_SUSPENDED")
+        self.assertNotIn("token", response)
+        mock_audit.assert_not_called()
+
 if __name__ == "__main__":
     unittest.main()

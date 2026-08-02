@@ -30,7 +30,7 @@ Describe the business behavior in Given/When/Then atomic criteria.
 * **AC-1**: Given a valid user session, When the user triggers ... Then ...
 * **AC-2**: ...
 
-## 3. Conceptual Interface Contract
+## 3. Interface / Contract
 Describe inputs and outputs conceptually (use plain domain terms, no physical keys or datatypes).
 * **Inputs**: User credentials, target session token.
 * **Outputs**: Verification status, profile payload.

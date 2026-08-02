@@ -128,6 +128,10 @@ authoritative_context_files:
   - "glossary.md"
   - "deployment-boundary.md"
   - "role-scenario-matrix.md"
+  - "README.md"
+  - "README.zh.md"
+  - "readme.md"
+  - "readme.zh.md"
 """
 
 DEFAULT_SPEC_TEMPLATE = """---
@@ -137,10 +141,8 @@ version: 1.0.0
 side_effects:
   database:
     - table: "<table_name>"
-      operations: ["select", "insert", "update", "delete"]
-  external_apis:
-    - domain: "api.example.com"
-      purpose: "Describe what the external API is used for"
+      operations: ["select", "insert"]
+  external_apis: []
   file_system: []
   browser_storage: []
 ---
@@ -150,42 +152,33 @@ side_effects:
 ## 1. Purpose
 A concise statement of the business goal. Explain what problem this capability solves for the user, and why it is necessary.
 
-## 2. Acceptance Criteria (AC)
-Provide a list of verifiable conditions. Keep them clear, atomic, and testable so that a QA/Test generator can map tests 1-to-1:
+## 2. Acceptance Criteria
+Provide a list of verifiable conditions. Keep them clear, atomic, and testable using plain business/domain terms:
 
-- **AC-1**: [Given / When / Then] or [Condition / Expected Behavior]
-- **AC-2**: [Given / When / Then] or [Condition / Expected Behavior]
-- **AC-3**: [Given / When / Then] or [Condition / Expected Behavior]
+- **AC-1**: Given [Precondition] / When [Action] / Then [Expected business outcome]
+- **AC-2**: Given [Precondition] / When [Action] / Then [Expected business outcome]
+- **AC-3**: Given [Precondition] / When [Action] / Then [Expected business outcome]
 
 ## 3. Interface / Contract
-Define the machine-readable input and output schemas. TypeScript types or JSON Schema fragments are highly recommended.
+Define the machine-readable input and output schemas conceptually.
 
-### Request Schema / TypeScript definition:
-```typescript
-interface RequestPayload {
-  id: string;
-}
-```
+### A. Business Inputs (Information required to initiate):
+- **User Identifier**: The identity of the authenticated user performing the action.
+- **Input Item 1**: Explanation of the required business input (e.g. quantity, selected ID).
 
-### Response Schema / TypeScript definition:
-```typescript
-interface ResponsePayload {
-  success: boolean;
-  message?: string;
-}
-```
+### B. Business Outputs (Information returned upon completion):
+- **Result Status**: Succession or failure of the action from a business perspective.
+- **Output Item 1**: Explanation of the business output (e.g. generated order reference).
 
 ## 4. Business Rules & Edge Cases
-Detailed constraints, business logic, validation rules, and specific edge case behaviors.
+Detailed business constraints, validation rules, and specific edge case behaviors from the user's perspective:
 
-## 5. Technical Notes (Optional)
-Database schema assumptions, performance budgets, third-party library constraints, or architectural callouts.
+- **Validation Rules**: Minimum lengths, business constraints, valid formats.
+- **Error Behavior**: Map specific failure scenarios to user-friendly business descriptions.
+- **Rate Limits & Boundaries**: Max/min thresholds, business throttling policies.
 
-## 6. Operational Contract (When Applicable)
-Define externally verifiable lifecycle behavior for migrations, source/build output, deployment identity, configuration loading, runtime discovery, activation/rollback, permissions, retention, health/smoke checks, and observability. Keep implementation choices in `design.md`.
-
-## 7. State & Data Contract (When Applicable)
-Define initial/empty-state reachability, transitions, immutable internal versus editable external identifiers, creator/owner binding, runtime source of truth and writer, derived projections/exports, scheduled completion, retry/backfill, and reconciliation behavior.
+## 5. Operational Contract (When Applicable)
+Define business-level lifecycle operational goals (e.g., retention, compliance, auditing rules). Keep technical choices (e.g. database schema migrations, deployment scripts, cron setups) in `design.md`.
 """
 
 DEFAULT_DESIGN_TEMPLATE = """---
@@ -197,54 +190,64 @@ version: 1.0.0
 
 # Technical Design Specification: <Capability Name>
 
-## 1. Architectural Overview
-A high-level technical overview of how this capability will be integrated into the existing system architecture.
+## 1. Architectural & Protocol Overview
+A high-level technical overview of how this capability will be integrated into the existing system architecture. State the chosen protocols (e.g., REST, gRPC, MQ), gateways, and component topology.
 
-## 2. Sequence Diagram & Key Workflows
-If applicable, outline how different components, services, or layers interact to achieve the user flows defined in the capability spec. Use Mermaid syntax for visualization:
+## 2. Business Contract Mapping
+Bridge the gaps between the conceptual "Business Information Exchange" in `spec.md` and the physical API schema.
+
+| Spec Information Element | Physical Field Name | Physical Type | Location (Header/Body/Query) | Constraints / Format |
+| :--- | :--- | :--- | :--- | :--- |
+| **User Identifier** | `userId` | `string` | Header / JWT payload | UUID format |
+| **Input Item 1** | `quantity` | `integer` | Body JSON | `>= 1` |
+| **Result Status** | `status` | `string` | Body Response JSON | Enum: `SUCCESS`, `FAILED` |
+| **Output Item 1** | `orderId` | `string` | Body Response JSON | UUID format |
+
+## 3. Sequence Diagram & Key Workflows
+Outline how different components, services, or layers interact to achieve the user flows defined in the capability spec. Use Mermaid syntax for visualization:
 
 ```mermaid
 sequenceDiagram
   autonumber
   actor User as User/Client
   participant API as API Layer
+  participant Service as Service Layer
   participant DB as Database
 
-  User ->> API: Request
-  API ->> DB: Select Query
-  DB -->> API: Record
+  User ->> API: Request (with physical payload)
+  API ->> Service: Call Business Logic
+  Service ->> DB: Select/Insert Query
+  DB -->> Service: Record
+  Service -->> API: Return Model
   API -->> User: Response
 ```
 
-## 3. Database Schema & Data Models
-Details of new database schemas, migrations, or data modeling adjustments. Outline primary keys, indexes, and constraints:
+## 4. Database Schema & Data Models
+Details of new database schemas, migrations, or data modeling adjustments. Outline physical table names, primary keys, indexes, and constraints:
 
 - **New Table/Modifications**: `table_name`
-  - `id` (UUID, Primary Key)
-  - `field_name` (VARCHAR, Indexed)
+  - `id` (VARCHAR(64), Primary Key)
+  - `field_name` (VARCHAR(128), Indexed)
 
-## 4. Class Design & API Routing (How)
-Detailed classes, functions, or endpoint patterns. Include design patterns, cache strategies, or third-party SDK integration details.
+## 5. Detailed API, Routing & Class Design (How)
+Detailed classes, functions, controllers, or endpoint routing patterns. Include design patterns, cache strategies, or third-party SDK integration details.
 
-## 5. Non-Functional Requirements & Performance Budgets
+## 6. Non-Functional Requirements & Performance Budgets
 - **Response Budget**: e.g., HTTP requests must return in <200ms.
 - **Cache Strategy**: e.g., Redis caching with TTL of 5 minutes.
 - **Error Handling & Retry Mechanism**: e.g., Backoff retries on transient external API failures.
 
-## 6. Source, Build & Runtime Boundaries (When Applicable)
-- **Source Directory**: Authoritative editable source location.
-- **Generated Output**: Build/release output location and whether it is tracked.
-- **Legacy Retirement**: Obsolete entrypoints/files to remove after cutover.
-- **Runtime & Configuration**: Supported runtime discovery, environment source, ownership, and secret boundary.
+## 7. Local Code Layout & Source Directories (When Applicable)
+- **Source Code Locations**: Paths to the primary editable source code files and directories.
+- **Build/Compile Output (If applicable)**: Frontend build directories or local static bundle destinations.
+- **Legacy Files & Entrypoints to Retire**: Code files, functions, or modules to delete/retire after implementing this design.
 
-## 7. Migration & Release Design (When Applicable)
-- **Migration Identity & Order**: Version/ledger and supported starting state.
-- **Compatibility & Recovery**: Rollout compatibility, failure behavior, and backout/restore plan.
-- **Activation & Rollback**: Pre-switch preparation, atomic activation, health checks, and rollback boundary. Do not resume an old writer after a migration it cannot understand.
-- **Permissions & Retention**: Service-readable artifacts and release pruning policy.
-- **Observability**: Logs, request correlation, release/source/schema identity in health evidence, explicitly authorized smoke checks, and post-release observation window.
+## 8. Local Data Migrations & Schema Evolution (When Applicable)
+- **Migration Identity & Sequencing**: Migration/version identifier (e.g. Flyway file or local script timestamp) and its order.
+- **Schema Backward/Forward Compatibility**: How the database schema change handles old/new data concurrently without breaking local runtime.
+- **Local Rollback Script DDL**: SQL statements or commands to revert the database schema change locally in case of validation failures.
 
-## 8. State Machine & Materialization (When Applicable)
+## 9. State Machine & Materialization (When Applicable)
 - **Reachability**: Initial/empty, active, terminal, retry, and recovery transitions without circular prerequisites.
 - **Truth & Writers**: Authoritative runtime store and single-writer boundaries.
 - **Derived Outputs**: Materialization order, rebuildable projections/exports, and compatibility consumers.
@@ -485,6 +488,10 @@ def load_config(root_path):
             "glossary.md",
             "deployment-boundary.md",
             "role-scenario-matrix.md",
+            "README.md",
+            "README.zh.md",
+            "readme.md",
+            "readme.zh.md",
         ],
         "ignore_dirs": [
             ".git",
@@ -676,14 +683,23 @@ def initialize_sds_project(root_path):
         
     spec_template_path = default_cap_dir / "spec.md"
     if not spec_template_path.exists():
+        spec_content = DEFAULT_SPEC_TEMPLATE\
+            .replace("<module_name>", "example_module")\
+            .replace("<capability_name>", "example_capability")\
+            .replace("<Capability Name>", "Example Capability")\
+            .replace("<table_name>", "example_table")
         with open(spec_template_path, "w", encoding="utf-8") as f:
-            f.write(DEFAULT_SPEC_TEMPLATE)
+            f.write(spec_content)
         print_success("Created spec draft: specs/example_module/example_capability/spec.md")
         
     design_template_path = default_cap_dir / "design.md"
     if not design_template_path.exists():
+        design_content = DEFAULT_DESIGN_TEMPLATE\
+            .replace("<module>", "example_module")\
+            .replace("<capability_name>", "example_capability")\
+            .replace("<Capability Name>", "Example Capability")
         with open(design_template_path, "w", encoding="utf-8") as f:
-            f.write(DEFAULT_DESIGN_TEMPLATE)
+            f.write(design_content)
         print_success("Created design draft: specs/example_module/example_capability/design.md")
         
     journey_path = module_context_dir / "user-journey.md"
@@ -704,15 +720,6 @@ def initialize_sds_project(root_path):
             f.write(DEFAULT_DOMAIN_MODEL_TEMPLATE)
         print_success("Created module domain-model: specs/example_module/_context/domain-model.md")
         
-    this_script_path = Path(__file__).resolve()
-    target_script_path = root_path / "sds_self_check.py"
-    if not target_script_path.exists():
-        try:
-            shutil.copy(this_script_path, target_script_path)
-            print_success("Copied sds_self_check.py validator script to project root.")
-        except Exception as e:
-            print_warn(f"Could not copy self-check script: {e}")
-            
     print("\n" + "="*50)
     print(f"{COLOR_GREEN}{COLOR_BOLD}SDS Project Initialized Successfully!{COLOR_RESET}")
     print("Under SDS, modules host complete business scenarios, while capabilities provide concrete details.")
@@ -932,6 +939,7 @@ def validate_sds(root_path):
     specs_found = []
     frontmatters = {}
     spec_to_acs = {}
+    spec_to_status = {}
     cap_to_spec_file = {}
     checked_module_contexts = set()
     
@@ -1018,6 +1026,7 @@ def validate_sds(root_path):
                 })
             else:
                 cap_to_spec_file[cap_id] = str(rel_spec_path)
+                spec_to_status[cap_id] = fm.get("status", "").lower()
                 
             missing_headers = check_headings(body, config["required_sections"])
             if missing_headers:
@@ -1063,6 +1072,7 @@ def validate_sds(root_path):
         print_info("Step 4: Running detailed Traceability and AC alignment verification...")
         
         trace_pattern = re.compile(r'@sds-trace:\s*([\w\-\.]+)(?::([\w\-]+))?')
+        traced_acs = {cap_id: set() for cap_id in spec_to_acs}
         
         for path in root_path.rglob("*"):
             if path.is_file() and any(path.name.endswith(ext) for ext in [".py", ".js", ".ts", ".html", ".go", ".rs", ".css", ".java", ".xml"]):
@@ -1099,10 +1109,27 @@ def validate_sds(root_path):
                                             "message": f"Code traces to '{cap_id}:{ac_id}', but '{ac_id}' is not defined in spec: '{spec_file_origin}'.",
                                             "remediation_hint": f"Ensure your spec markdown lists '- **{ac_upper}**' as an atomic bullet item."
                                         })
+                                    else:
+                                        traced_acs[cap_id].add(ac_upper)
                 except Exception as e:
                     print_warn(f"Failed to scan file {path} for traceability: {e}")
                     
-        if not any(e["code"] in ["INVALID_TRACE_CAPABILITY", "INVALID_TRACE_AC"] for e in errors):
+        # Verify trace coverage for all implemented/verified specs
+        for cap_id, defined_acs in spec_to_acs.items():
+            status = spec_to_status.get(cap_id, "")
+            if status in ["implemented", "verified"]:
+                uncovered_acs = defined_acs - traced_acs[cap_id]
+                if uncovered_acs:
+                    spec_file_origin = cap_to_spec_file.get(cap_id)
+                    errors.append({
+                        "code": "MISSING_TRACE_COVERAGE",
+                        "severity": "error",
+                        "target": spec_file_origin,
+                        "message": f"Capability '{cap_id}' is marked as '{status}', but is missing `@sds-trace` annotations for: {', '.join(sorted(uncovered_acs))}.",
+                        "remediation_hint": f"Add matching `# @sds-trace: {cap_id}:AC-n` comments above the implementation lines or tests."
+                    })
+                    
+        if not any(e["code"] in ["INVALID_TRACE_CAPABILITY", "INVALID_TRACE_AC", "MISSING_TRACE_COVERAGE"] for e in errors):
             print_success("Traceability & AC alignment verification passed.")
 
     # --- 5. Side-Effects Static Audit (Including Java & MyBatis support) ---

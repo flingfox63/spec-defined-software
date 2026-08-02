@@ -13,7 +13,13 @@ import urllib.error
 MOCK_DATABASE = {
     "alice": {
         "id": "user-uuid-1111",
-        "password_hash": hashlib.sha256("password123".encode()).hexdigest()
+        "password_hash": hashlib.sha256("password123".encode()).hexdigest(),
+        "status": "active",
+    },
+    "bob": {
+        "id": "user-uuid-2222",
+        "password_hash": hashlib.sha256("password456".encode()).hexdigest(),
+        "status": "suspended",
     }
 }
 
@@ -40,6 +46,14 @@ def login(username, password):
             "error_code": "INVALID_CREDENTIALS",
             "message": "Invalid password credentials"
         }, 401
+
+    # @sds-trace: user_auth.login:AC-5
+    if user_record.get("status", "active") == "suspended":
+        return {
+            "success": False,
+            "error_code": "ACCOUNT_SUSPENDED",
+            "message": "Account is suspended"
+        }, 403
 
     # @sds-trace: user_auth.login:AC-3
     # Issue a signed mock JWT token

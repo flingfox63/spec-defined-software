@@ -180,7 +180,7 @@ class SdsSelfCheckTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             config = SDS_HARNESS.load_config(root)
             self.assertEqual(config["verification_commands"], [])
-            self.assertTrue((root / "sds_self_check.py").is_file())
+            self.assertFalse((root / "sds_self_check.py").exists())
             agents_path = root / "AGENTS.md"
             self.assertTrue(agents_path.is_file())
             agents_text = agents_path.read_text(encoding="utf-8")

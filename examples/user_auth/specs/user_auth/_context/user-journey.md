@@ -9,7 +9,8 @@ This module handles secure user authentication, token issuance, and password ver
 1. **User Login**:
    - Given a registered user with valid credentials.
    - When the user submits their username and password.
-   - Then the system verifies the password and issues a secure JWT token.
+   - Then the system verifies the password and, when the account is active, issues a secure signed token.
+   - If the account is suspended, the system denies login without issuing a token or recording a successful-login audit entry.
 2. **Accessing Protected Resources**:
    - The user includes the JWT token in their request header.
    - The system validates the signature, expiration, and payload, granting or denying access.
@@ -20,6 +21,7 @@ This module handles secure user authentication, token issuance, and password ver
   - `id`: unique string uuid
   - `username`: unique email or alphanumeric handle
   - `password_hash`: secure password hash
+  - `status`: account eligibility state; an active account may log in, while a suspended account may not
 - **AuthToken**:
   - `access_token`: signed JWT string
   - `expires_at`: Unix timestamp of token expiry

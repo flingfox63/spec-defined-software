@@ -10,6 +10,14 @@ This manual provides a detailed step-by-step guide for developers, product manag
 As an AI-Native development paradigm, SDS is completely driven through natural language **AI Commands (AI 交互指令)** rather than manual script execution. You do not need to run terminal scripts or manually structure complex files. Simply issue standard commands in chat to your AI Agent to automate the complete requirement delivery cycle:
 作为 AI 原生（AI-Native）的开发范式，SDS 完全通过自然语言的 **AI 交互指令** 驱动，而非传统的手动脚本执行。您无需在终端运行繁杂的命令或手动搭建复杂文件，只需在聊天中向您的 AI 代理发送标准指令，即可自动闭环整个需求交付周期：
 
+> [!IMPORTANT]
+> **Difference between AI Chat Commands and Terminal CLI Commands / AI 聊天指令与终端 CLI 命令的区别**
+> - **AI Chat Commands (AI 聊天指令)**: Commands starting with `/sds ...` (e.g., `/sds analyze`, `/sds implement`, `/sds verify`, `/sds heal`) are high-level **Slash Prompts** designed to be typed directly into your AI assistant chat window to instruct your agentic coding assistant. They are **NOT** terminal shell commands.
+> - **Terminal CLI Commands (终端 CLI 命令)**: Commands starting with `sds ...` (e.g., `sds check`, `sds init`, `sds install-hook`) are physical executable binaries that run directly in your local terminal or CI/CD pipelines.
+> 
+> - **AI 聊天指令**：以 `/sds ...` 开头的指令（如 `/sds analyze`、`/sds implement` 等）是高级**聊天快捷 Prompts**，设计用于在 AI 助手聊天窗口中输入以命令 Agent。它们**不是**在终端执行的 Shell 命令。
+> - **终端 CLI 命令**：以 `sds ...` 开头的命令（如 `sds check`、`sds init` 等）是实体二进制可执行命令，运行在您的本地终端或 CI/CD 管道中。
+
 ### 1.1 The Standard AI Command Set / SDS 标准 AI 指令集
 
 | AI Command / AI 指令 | Action & Description / 核心作用与行为 | Behind-the-scenes Agent Task / AI 后台执行任务 |

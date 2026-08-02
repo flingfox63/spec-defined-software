@@ -9,14 +9,14 @@ version: 2.0.0
 ## 1. Purpose
 A concise statement of the business goal. Explain what problem this capability solves for the user, and why it is necessary.
 
-## 2. Acceptance Criteria (AC)
+## 2. Acceptance Criteria
 Provide a list of verifiable conditions. Keep them clear, atomic, and testable using plain business/domain terms:
 
 - **AC-1**: Given [Precondition] / When [Action] / Then [Expected business outcome]
 - **AC-2**: Given [Precondition] / When [Action] / Then [Expected business outcome]
 - **AC-3**: Given [Precondition] / When [Action] / Then [Expected business outcome]
 
-## 3. Business Information Exchange (Interface / Contract)
+## 3. Interface / Contract
 Define the conceptual information exchange required for this capability. Do not include physical API routes, JSON payloads, or specific database/code schemas.
 
 ### A. Business Inputs (Information required to initiate):

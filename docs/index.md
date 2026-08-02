@@ -55,6 +55,23 @@ Verify your repository structure, code annotations, and check for spec-to-code d
 sds check
 ```
 
+## 🗺️ Ecosystem Roadmap
+
+The SDS platform is evolving from a baseline linting tool into a fully automated, E2E AI-collaborative software delivery operating system. Below is our development timeline and milestones:
+
+| Milestone / Module | Target | Status | Core Deliverables & Capabilities |
+| :--- | :--- | :--- | :--- |
+| **`sds-core`**<br>*(The Guardrail)* | Shipped | **🟢 Released** | • Statically verifies directory layouts and Frontmatter states.<br>• Integrates pre-commit Git hooks and global installers.<br>• Exposes standard stdio Model Context Protocol (MCP) server. |
+| **`sds-ideator`**<br>*(Socratic PM)* | Q3 2026 | **🟡 In Progress** | • Socratic alignment prompt suites to refine loose ideas into BDD Gherkin ACs.<br>• Synthesizes and drafts initial `spec.md` files in `specs_review/`. |
+| **`sds-architect`**<br>*(Lead Engineer)* | Q3 2026 | **🟡 In Progress** | • Compiles accepted product specs into concrete technical schemas.<br>• Auto-generates TypeScript/Go API contracts, database migrations, and `design.md`. |
+| **`sds-coder`**<br>*(Autonomous Synthesizer)* | Q4 2026 | **🔵 Planned** | • Subagent-driven code writer implementing functions directly from specs.<br>• Automatically inserts `@sds-trace` anchors and self-heals compiler/drift errors. |
+| **`sds-qa`**<br>*(BDD Test Compiler)* | Q4 2026 | **🔵 Planned** | • Synthesizes runnable integration, unit, and E2E test scripts from ACs.<br>• Mandates a quality gate verification prior to deployment triggering. |
+| **`sds-ops`**<br>*(Atomic Release)* | Q1 2027 | **🔵 Planned** | • Capistrano-style atomic releases with symbolic-link switching.<br>• Automated virtualenv isolation and remote passwordless rollback controls. |
+
+## 💖 Heritage & Inspiration
+
+Spec-Defined Software (SDS) is proud of its roots and is heavily inspired by and evolved from GitHub's [spec-kit](https://github.com/github/spec-kit) methodology. We extend the original `spec-kit` patterns by introducing automated zero-drift linting, multi-agent LLM orchestration safety gates, and physical bidirectional traceability (`@sds-trace`) engineered specifically for the AI native era.
+
 ---
 
 > [!NOTE]

@@ -2,6 +2,11 @@
 
 `sds-coder` is the workhorse of the SDS lifecycle. It coordinates and supervises code generation, ensuring that all implementation steps are strictly bound to accepted specifications.
 
+> [!NOTE]
+> **Ecosystem Status: 🔵 Planned / 模块开发状态：规划中**
+> This module (`sds-coder`) is currently **Planned** as outlined in our [Roadmap](../index.md#ecosystem-roadmap). The specifications and instructions below describe the target design and behavioral interface, but the physical skill package is not yet active.
+> 本模块目前处于**规划中**阶段。下述规范和指令描述了其目标架构和行为定义，但其实体技能包尚未正式激活。
+
 ---
 
 ## Key Capabilities

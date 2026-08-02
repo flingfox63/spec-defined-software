@@ -55,6 +55,25 @@ sds init
 sds check
 ```
 
+## 🗺️ 生态路线图 (Ecosystem Roadmap)
+
+SDS 正在从一个基础的静态校验工具，逐步演进为一个端到端、完全自动化的 AI 协同软件交付操作系统。以下是我们的核心里程碑与发展时间线：
+
+| 阶段 / 模块 | 计划时间 | 当前状态 | 核心交付物与能力介绍 |
+| :--- | :--- | :--- | :--- |
+| **`sds-core`**<br>*(校验护栏)* | 已发布 | **🟢 已发布** | • 静态校验 `specs/` 目录结构与 Frontmatter 状态。<br>• 物理集成 Pre-commit 钩子与跨平台一键安装器。<br>• 暴露标准的 Model Context Protocol (MCP) 语义服务器。 |
+| **`sds-ideator`**<br>*(苏格拉底产品经理)* | 2026 Q3 | **🟡 进行中** | • 苏格拉底式对齐 Prompt 套件，将模糊想法提炼为 BDD Gherkin AC。<br>• 自动在 `specs_review/` 目录下合成并起草初始 `spec.md` 规范。 |
+| **`sds-architect`**<br>*(架构总监)* | 2026 Q3 | **🟡 进行中** | • 将通过的业务规范一键编译为具象的技术实现方案。<br>• 自动生成 TypeScript/Go API 契约、数据库迁移脚本并写入 `design.md`。 |
+| **`sds-coder`**<br>*(自主代码合成)* | 2026 Q4 | **🔵 规划中** | • 智能体驱动的自动化编码器，直接基于 Spec 生成业务代码。<br>• 自动插桩 `@sds-trace` 并自动修复测试编译/规范漂移报错。 |
+| **`sds-qa`**<br>*(BDD 测试编译器)* | 2026 Q4 | **🔵 规划中** | • 将 AC 自动编译为可运行的集成测试、单元测试与 E2E 校验脚本。<br>• 强制执行质量卡点检验，通过后才可解锁后续部署管道。 |
+| **`sds-ops`**<br>*(原子化无损发布)* | 2027 Q1 | **🔵 规划中** | • 类似 Capistrano 风格的原子化符号链接（Symlink）版本切换发布。<br>• 自动隔离 Virtualenv 并支持一键免密无损回滚策略。 |
+
+## 💖 致敬与灵感来源 (Heritage & Inspiration)
+
+Spec-Defined Software (SDS) 非常荣幸继承了开源社区的优秀传统，本项目的核心设计深受 GitHub 先驱项目 [spec-kit](https://github.com/github/spec-kit) 规范开发模式的启发并由其演进而来。 
+
+我们在其经典 `spec-kit` 规范驱动理念之上，针对 AI 原生开发时代进行了大幅度的能力扩展 —— 物理引入了零偏差静态校验器、多智能体协同安全网、以及物理层双向可追溯 `@sds-trace` 机制，致力于打造 AI 原生时代下坚不可摧的需求契约闭环。
+
 ---
 
 > [!NOTE]

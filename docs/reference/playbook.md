@@ -23,3 +23,12 @@ Before pushing a feature or delivering a requirement, complete this quick checkl
 * [ ] **Traceability Annotated**: Did you add `@sds-trace` annotations to all relevant implementation lines and test classes?
 * [ ] **Automated Tests Passing**: Have all unit, integration, and contract tests passed?
 * [ ] **Review Cleaned**: Did you verify that no temporary artifacts or screenshots have been accidentally added to the git-tracked `specs/` folder?
+
+---
+
+## 🤖 AI Agent Playbook Reference
+
+If you are an **LLM AI Coding Agent** (e.g., Antigravity) working on this repository, you must read and adhere to the specialized, highly-actionable [AI Agent Playbook](https://github.com/flingfox63/spec-defined-software/blob/main/references/sds-playbook.md). It outlines:
+- Interactive slash command workflows
+- Multi-agent orchestration and role delegation protocols
+- Detailed verification-before-completion feedback loops

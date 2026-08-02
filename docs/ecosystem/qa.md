@@ -2,6 +2,11 @@
 
 The **`sds-qa`** skill bridges the critical gap between coding (`sds-coder`) and production operations (`sds-ops`). It is the non-negotiable **quality gatekeeper** of the Spec-Defined Software (SDS) delivery pipeline.
 
+> [!NOTE]
+> **Ecosystem Status: 🔵 Planned / 模块开发状态：规划中**
+> This module (`sds-qa`) is currently **Planned** as outlined in our [Roadmap](../index.md#ecosystem-roadmap). The specifications and instructions below describe the target design and behavioral interface, but the physical skill package is not yet active.
+> 本模块目前处于**规划中**阶段。下述规范和指令描述了其目标架构和行为定义，但其实体技能包尚未正式激活。
+
 ```mermaid
 graph TD
     Ideator[sds-ideator <br> 1. User Story / Journey] --> Coder[sds-coder <br> 2. Code Generation]
