@@ -43,11 +43,18 @@ fi
 PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
 print_success "Found Python 3 (v$PYTHON_VERSION)"
 
+# 1.5 Determine installation source (local vs remote)
+INSTALL_SOURCE="git+https://github.com/flingfox63/spec-defined-software.git"
+if [ -f "pyproject.toml" ]; then
+    print_info "Detected local 'pyproject.toml'! Running in local development installation mode..."
+    INSTALL_SOURCE="."
+fi
+
 # 2. Decide installation path (pipx vs isolated venv)
 if command -v pipx >/dev/null 2>&1; then
     print_info "Found pipx! Installing globally and isolating dependencies..."
     set +e
-    pipx install git+https://github.com/your-org/spec-defined-software.git --force >/dev/null 2>&1
+    pipx install "$INSTALL_SOURCE" --force >/dev/null 2>&1
     PIPX_STATUS=$?
     set -e
     if [ $PIPX_STATUS -eq 0 ]; then
@@ -77,7 +84,7 @@ print_success "Isolated virtualenv created."
 # Upgrade pip and install package
 print_info "Installing sds-cli package..."
 "$VENV_DIR/bin/pip" install --upgrade pip >/dev/null 2>&1
-"$VENV_DIR/bin/pip" install git+https://github.com/your-org/spec-defined-software.git >/dev/null 2>&1
+"$VENV_DIR/bin/pip" install "$INSTALL_SOURCE" >/dev/null 2>&1
 print_success "Package installed successfully."
 
 # 4. Create symlink in ~/.local/bin

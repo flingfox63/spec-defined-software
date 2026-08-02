@@ -10,12 +10,12 @@ The easiest way to install SDS globally is to use our one-line installers. They 
 
 ### macOS / Linux (One-Line Bash)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/spec-defined-software/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.sh | sh
 ```
 
 ### Windows (One-Line PowerShell)
 ```powershell
-irm https://raw.githubusercontent.com/your-org/spec-defined-software/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.ps1 | iex
 ```
 
 ### Advanced: Python Package Managers
@@ -24,11 +24,11 @@ If you prefer to manage the python packages manually:
 
 * **Using pipx**:
   ```bash
-  pipx install git+https://github.com/your-org/spec-defined-software.git
+  pipx install git+https://github.com/flingfox63/spec-defined-software.git
   ```
 * **Using pip** (inside a virtual environment):
   ```bash
-  pip install git+https://github.com/your-org/spec-defined-software.git
+  pip install git+https://github.com/flingfox63/spec-defined-software.git
   ```
 
 ---

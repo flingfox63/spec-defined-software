@@ -26,7 +26,7 @@ Add the following block to your project's `.pre-commit-config.yaml` file to inte
 
 ```yaml
 repos:
-  - repo: https://github.com/your-org/spec-defined-software
+  - repo: https://github.com/flingfox63/spec-defined-software
     rev: v1.0.0  # Put the latest release tag or commit hash here
     hooks:
       - id: sds-check

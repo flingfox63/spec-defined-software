@@ -39,7 +39,7 @@
 ### 1. 一键安装
 使用我们的一键脚本安装 CLI 工具：
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/spec-defined-software/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.sh | sh
 ```
 
 ### 2. 初始化项目

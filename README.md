@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: >=3.8](https://img.shields.io/badge/Python->=3.8-blue.svg)](https://python.org)
-[![Platform: Cross-Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-green.svg)](https://github.com/your-org/spec-defined-software)
+[![Platform: Cross-Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-green.svg)](https://github.com/flingfox63/spec-defined-software)
 
 **Spec-Defined Software (SDS)** is the central operating system for AI-collaborative software delivery. 
 
@@ -41,12 +41,12 @@ The easiest way to install the SDS CLI globally with automated `PATH` configurat
 
 ### macOS / Linux (Bash)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/spec-defined-software/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.sh | sh
 ```
 
 ### Windows (PowerShell)
 ```powershell
-irm https://raw.githubusercontent.com/your-org/spec-defined-software/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.ps1 | iex
 ```
 
 ---

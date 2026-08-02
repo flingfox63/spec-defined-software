@@ -39,7 +39,7 @@ Get started with the SDS CLI in seconds:
 ### 1. Installation
 Install the CLI tool globally using our one-line installer:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/spec-defined-software/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.sh | sh
 ```
 
 ### 2. Initialization

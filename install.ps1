@@ -51,10 +51,17 @@ try {
     }
 } catch {}
 
+# 1.5 Determine installation source (local vs remote)
+$InstallSource = "git+https://github.com/flingfox63/spec-defined-software.git"
+if (Test-Path "pyproject.toml") {
+    Print-Info "Detected local 'pyproject.toml'! Running in local development installation mode..."
+    $InstallSource = "."
+}
+
 if ($PipxInstalled) {
     Print-Info "Found pipx! Installing globally and isolating dependencies..."
     try {
-        pipx install git+https://github.com/your-org/spec-defined-software.git --force | Out-Null
+        pipx install $InstallSource --force | Out-Null
         Print-Success "SDS CLI successfully installed via pipx!"
         Write-Host ""
         Write-Host "Try running:"
@@ -83,7 +90,7 @@ Print-Success "Isolated virtualenv created."
 # Upgrade pip and install package
 Print-Info "Installing sds-cli package..."
 & (Join-Path $VenvDir "Scripts\pip.exe") install --upgrade pip --quiet
-& (Join-Path $VenvDir "Scripts\pip.exe") install git+https://github.com/your-org/spec-defined-software.git --quiet
+& (Join-Path $VenvDir "Scripts\pip.exe") install $InstallSource --quiet
 Print-Success "Package installed successfully."
 
 # 4. Expose CLI script

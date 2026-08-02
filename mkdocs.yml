@@ -1,6 +1,6 @@
-site_name: SDS (Spec-Defined Software)
+site_name: Spec-Defined Software (SDS)
 site_description: The central operating system for AI-collaborative software delivery.
-site_url: https://your-org.github.io/spec-defined-software
+site_url: https://flingfox63.github.io/spec-defined-software
 
 plugins:
   - search
