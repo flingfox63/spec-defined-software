@@ -1,0 +1,21 @@
+# Standard SDS Harness config for the User Auth example
+project_name: "SDS User Authentication Example"
+spec_dir: "specs"
+review_dir: "specs_review"
+required_sections:
+  - "Purpose"
+  - "Acceptance criteria"
+  - "Interface / contract"
+enforce_drift_guard: true
+enforce_side_effects: true
+enforce_traceability: true
+enforce_artifact_placement: true
+enforce_module_boundaries: true
+verification_commands:
+  - ["{python}", "-m", "unittest", "-v"]
+authoritative_context_files:
+  - "system-blueprint.md"
+  - "user-journey.md"
+  - "business-flow.md"
+  - "domain-model.md"
+  - "change-history.md"

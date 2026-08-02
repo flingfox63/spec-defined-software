@@ -1,0 +1,66 @@
+# --- Python Environment ---
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.coverage
+htmlcov/
+
+# --- Python Build & Packaging ---
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Local Virtual Environments ---
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.sds/
+
+# --- IDEs, Editors & System Clutter ---
+.project
+.pydevproject
+.settings/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# --- MkDocs Static Site Outputs ---
+site/
+
+# --- SDS (Spec-Defined Software) Rules ---
+# The drafting kitchen workspace contains temporary diagnostic/execution logs and must be gitignored.
+specs_review/
+diagnostics.json
+**/verification/
+**/specs_review/

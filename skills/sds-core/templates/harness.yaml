@@ -1,0 +1,34 @@
+# SDS Validation Harness Configuration
+# Place this file in the project root as `.sds.harness.yaml`
+
+project_name: "My SDS Project"
+spec_dir: "specs"
+review_dir: "specs_review"
+
+# Required sections in every spec.md file to be considered valid
+required_sections:
+  - "Purpose"
+  - "Acceptance criteria"
+  - "Interface / contract"
+
+# Defensive Guardrails
+enforce_drift_guard: true       # Ensure code/UI changes have corresponding spec updates in the same changeset
+enforce_side_effects: true      # Statically check database or external API operations against spec metadata
+enforce_traceability: true      # Ensure code features trace back to specs with @sds-trace annotations
+enforce_artifact_placement: true # Keep assessments, plans, and diagnostics in specs_review/
+enforce_module_boundaries: true # Require module _context and path-aligned capability IDs
+
+# Optional project-quality gate. Commands run directly without shell expansion.
+# Keep secrets out of arguments and remote deployment checks in release tooling.
+verification_commands: []
+# Example: ["{python}", "-m", "pytest", "tests/"]
+
+authoritative_context_files:
+  - "system-blueprint.md"
+  - "user-journey.md"
+  - "business-flow.md"
+  - "domain-model.md"
+  - "change-history.md"
+  - "glossary.md"
+  - "deployment-boundary.md"
+  - "role-scenario-matrix.md"

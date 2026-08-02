@@ -1,0 +1,175 @@
+---
+name: sds
+description: "Apply Spec-Defined Software (SDS) to software changes, audits, refactors, frontend/backend work, database migrations, release automation, and spec/code alignment. Use when a project has specs/, .sds.harness.yaml, or asks for spec-first delivery, zero-drift verification, technical assessment placement, pre-release checks, or SDS self-check maintenance."
+---
+
+# SDS — Spec-Defined Software (Requirement Delivery Version)
+
+Treat the durable specification as the highest source of truth for requirement delivery. Work in this order:
+
+`user scenario -> accepted context/spec/design -> implementation -> verification -> requirement delivery`
+
+## SDS Philosophy: The Ultimate Destination
+Spec-Defined Software (SDS) represents the transition of requirement delivery from manual coding to precise specification-defining. In this ultimate paradigm, a business requirement's complete behavioral and business identity is codified in its `_context/` and `spec.md` (the "What"). The technical designs, code implementation, and test suites are logical derivatives that can be automatically synthesized, verified, and healed (e.g., by AI engines). 
+
+**Philosophical Directive for the Agent**: Always treat the Specification as the absolute source of truth for the entire requirement delivery process. Prioritize the completeness and clarity of the Specification over immediate coding. The code is merely a compiled artifact of the delivered requirement. Keep your edits highly focused on the Spec-first delivery model, mapping every change back to an Acceptance Criterion (AC) in the Spec.
+
+## Core Concepts for Beginners
+To avoid any confusion when starting with SDS, remember these three core separations:
+1. **Module vs. Capability (and why Capability $\neq$ API Interface)**:
+   - **Module** (Business Subdomain): A high-level, stable noun representing a macro business area (e.g., `order`, `billing`, `user_auth`).
+   - **Capability** (User Feature Scenario): A specific, actionable business transaction/lifecycle inside a Module (e.g., `place_payment_order`, `refund_payment`).
+   - **The Golden Rule**: **A Capability is NOT a physical API interface/endpoint.** A Capability represents business-value scenarios from the user/product perspective (defined in `spec.md`). A single Capability (like `place_payment_order`) can be physically realized by multiple API endpoints (e.g., separate redirect vs direct-debit endpoints) or polymorphic parameter routes, which are mapped solely in `design.md`. 1-to-1 mapping of APIs to Capabilities is a strict anti-pattern that leads to information duplication and spec fragmentation.
+2. **`specs/` (Durable) vs. `specs_review/` (Temporary)**:
+   - **`specs_review/`** is the **Drafting Kitchen** (local, gitignored). Write research, feature proposals, design comparisons, and execution plans here.
+   - **`specs/`** is the **Authoritative Dining Room** (tracked in git). Once a proposal is accepted, promote only the final agreed-upon conclusions into `specs/` as `spec.md` and `design.md`. Implementation code must ONLY be written based on accepted specs.
+3. **Where does the Code live?**:
+   - SDS files live *alongside* your source code as a metadata sidecar.
+   - Your actual implementation code (Python, Go, JS, etc.) lives in your standard project folders (e.g., `src/`, `app/`), and automated test files live in `tests/`, completely separate from the `specs/` directory.
+
+## User Scenario Translation Guidelines
+
+When given a raw User Scenario (e.g., qualitative user requests or behavioral needs), the Agent must translate it into an authoritative specification using these guidelines:
+1. **Distill the Core Business Value**: Extract the specific problem being solved, the target user, and the desired outcome. Avoid technical solutioning at this stage.
+2. **Determine Bounded Context Routing**: Route the scenario to the correct Module (bounded context) using the global `system-blueprint.md`. Do not let physical code structures dictate business boundaries.
+3. **Formulate Gherkin-Style Acceptance Criteria**: Translate the user scenario into precise, atomic, and verifiable Acceptance Criteria (ACs) using the `Given-When-Then` format. Ensure ACs cover both the happy path and critical business boundaries (e.g., data compliance, error state constraints, and user experience thresholds).
+4. **Draft Conceptual Interface Contracts**: Extract the conceptual elements that must flow in and out of the capability (e.g., "User credentials", "Validation status") as defined by the scenario. Never use physical keys, physical endpoints, or camelCase terminology here.
+5. **Enforce Local Invariants**: Identify and document any business rules or invariants that must remain unbroken (e.g., "A user cannot login if their account status is suspended").
+
+## Start every task
+
+1. Read the repository instructions (`AGENTS.md` or equivalent), `.sds.harness.yaml`, relevant `_context/`, capability `spec.md`, and accepted `design.md`.
+2. Route the change by the user scenario and ownership boundary, not by the table, implementation file, or current directory. Confirm the capability lives under the owning module, its `capability_id` matches that path, and the module has `_context/`. Put cross-cutting schema/migration/infrastructure design work under a system/ops module.
+3. Classify the request before writing documents:
+   - assessment, comparison, audit, proposal, migration plan, execution plan, diagnostics, or test evidence -> `specs_review/`;
+   - accepted current behavior/contract (100% Product-Oriented) -> `spec.md`;
+   - accepted implementation architecture (100% Tech-Oriented) -> `design.md`;
+   - accepted cross-capability facts, scenarios, boundaries, vocabulary, or factual history -> `_context/`.
+4. If the user accepts a proposal and asks to implement it, promote only the accepted decisions into durable specs/design/context before changing code. Keep the original assessment in `specs_review/`.
+5. Never link durable files under `specs/` to gitignored `specs_review/` artifacts.
+
+SDS does not impose a plan-first or confirmation-first gate. Create a plan when complexity or repository policy requires one, and request confirmation only when intent, authority, or a material product decision is unresolved.
+
+## Key Project File Constraints & Governance
+
+To prevent information conflicts and keep the repository clean, the SDS layout has strict key file constraints. Any files outside this list under `specs/` are considered redundant and must be actively flagged, pruned, or consolidated.
+
+1. **Under Global Context `specs/_context/` (System-Wide, Allowed Files)**:
+   - `system-blueprint.md`: Global system architecture concepts, system module boundaries, and cross-module integration mapping (Context Mapping). No local module entities here.
+   - `glossary.md`: Global, system-wide unified dictionary and business terms.
+   - `change-history.md`: Overall factual migration timeline and historical change facts.
+   *(Alternatively, a single `README.md` is allowed to unify these for small projects).*
+
+2. **Under Module-Level Context `specs/<module>/_context/` (Highly Cohesive, Allowed Files)**:
+   - `glossary.md`: Module-specific local business terms and dictionary.
+   - `domain-model.md`: Module-specific local business entities, concepts, and domain relationships (Aggregate Roots and Entity graphs).
+   - `user-journey.md` / `business-flow.md`: Bounded context boundaries, local invariants, and business rules specific to this module.
+   - `change-history.md`: Factual migration timeline and history specific to this module.
+   *(Alternatively, a single `README.md` is allowed to unify these for small/medium modules. Do NOT allow ad-hoc markdown files).*
+
+3. **Under Capability-Level `specs/<module>/<capability>/` (Allowed Files)**:
+   - Exactly `spec.md` (accepted business behavior and AC, 100% product-oriented).
+   - Exactly `design.md` (accepted technical implementation, 100% tech-oriented).
+   - *No other files allowed here.* Any temporary thoughts, scratchpads, or research must be in `specs_review/`.
+
+4. **Active Governance**:
+   - When the agent performs any task, it MUST inspect the `specs/` directory.
+   - If any unauthorized or ad-hoc markdown files are found (e.g., legacy specs, raw notes, or duplicated doc files), the agent must immediately flag them to the user, recommend their removal/consolidation, and merge their valid durable conclusions into the standard files above to avoid information overload or conflicting definitions.
+
+5. **Durable Test Code vs. Verification Evidence**:
+   - **Durable Test Code**: All long-term automated test suites (pytest, Jest, unit/integration scripts) must live in the standard physical repository directories (e.g., `tests/` or `<module>/tests/`). They are first-class code assets and must use tracing annotations (`@sds-trace: <capability_id>:AC-n`) to trace back to the spec.
+   - **Verification Evidence**: The folder `specs_review/<module>/<capability>/verification/` is strictly a gitignored, temporary staging area. It only stores ephemeral run logs, test results, local screenshots, and validation outputs. No durable test scripts may be written or maintained here.
+
+## Define the complete change surface
+
+Do not limit SDS to application endpoints. Treat these as requirement deliverables when they change:
+
+- browser and mobile interaction, responsive layouts, navigation, accessibility, and source/build-output boundaries;
+- API payloads, identity propagation, authorization, data scopes, and error behavior;
+- database schema evolution, migration ordering, compatibility, failure recovery, and migration ledger state;
+- lifecycle reachability from empty/initial states, state transitions, scheduled completion, retry/backfill, and reconciliation;
+- authoritative data stores, single-writer boundaries, materialization order, and compatibility projections/exports.
+
+Update the owning capability spec first. Record implementation choices in `design.md`, not in acceptance criteria. Create or extend a system/ops capability when cross-cutting data transitions have no existing owner.
+
+## Implement and verify
+
+1. Make the smallest implementation that satisfies the accepted spec.
+2. Add `@sds-trace: <capability_id>:AC-n` at important implementation and test boundaries where the project requires traceability.
+3. Derive tests from the spec, not from the implementation. Use an independent agent only when the user or repository rules permit delegation; otherwise perform a separate spec-only test-design pass.
+4. Cover happy paths, authorization/data boundaries, invalid input, dependency failure, and retry/recovery where applicable.
+5. Run and validate the project-local self-checker: As an AI Agent, you must execute the project's local `sds_self_check.py` tool in the background to ensure zero-drift, check traceability annotations, and validate directory compliance. If validation fails, parse `specs_review/diagnostics.json`, fix the target files, and rerun.
+6. Run every project verification command declared in `.sds.harness.yaml`. Verify that your code changes pass all linting, static analysis, and automated test suites before delivering the requirement.
+7. Before handoff, inspect the complete diff and working tree for stale files, generated artifacts in source directories, obsolete legacy entrypoints, untracked files, and spec/code drift. Do not present or commit the work unless all checks return 100% success.
+
+## Multi-Agent Orchestration & Compatibility
+
+To maximize delivery quality and reduce cognitive load, SDS remains fully compatible with multi-agent orchestration paradigms and agentic skills frameworks (e.g., Jesse Vincent's `obra/superpowers`). When integrated into an agentic execution host, the Agent is encouraged to coordinate tasks using specialized subagents:
+- Use **Socratic Brainstorming** to translate raw User Scenarios into Gherkin-style Acceptance Criteria (ACs) in `specs_review/`.
+- Use **Defensive Planning** to break down accepted technical designs (`design.md`) into file-specific execution plans.
+- Use **Subagent-Driven Development (SDD)** to spawn isolated subagents for implementing physical codes and tests, ensuring clean context boundaries.
+- Use **Verification-Before-Completion** loops to execute `sds_self_check.py` and project-level test commands, validating zero-drift.
+
+## Artifact locations
+
+```text
+project/
+├── src/                                  # Your actual implementation source code
+│   └── <module>/                         # Project-specific physical package/code
+├── tests/                                # Your durable automated test suites (with @sds-trace)
+├── .sds.harness.yaml
+├── sds_self_check.py
+├── specs/                                # AUTHORITATIVE CONTRACTS (Tracked in Git)
+│   ├── _context/                         # Global context
+│   │   ├── system-blueprint.md
+│   │   ├── glossary.md
+│   │   └── change-history.md
+│   └── <module>/
+│       ├── _context/                     # Module context
+│       │   ├── glossary.md
+│       │   ├── domain-model.md
+│       │   ├── user-journey.md
+│       │   ├── business-flow.md
+│       │   └── change-history.md
+│       └── <capability>/
+│           ├── spec.md                   # accepted What (100% Product-Oriented)
+│           └── design.md                 # accepted How (100% Tech-Oriented)
+└── specs_review/                         # TEMPORARY REVIEW WORKSPACE (Gitignored)
+    └── <module>/<capability>/
+        ├── assessment.md
+        ├── plan.md
+        ├── task.md
+        ├── diagnostics.json
+        └── verification/                 # temporary evidence, screenshots, logs (no durable test code)
+```
+
+The project-local `sds_self_check.py` must remain runnable without an installed skill. The skill-owned `scripts/sds_self_check.py` is the upstream bootstrap/reference harness. Run it with `--refresh-harness` to update managed copies. It never overwrites a customized checker; it writes a merge candidate under `specs_review/`.
+
+## Capability spec minimum (100% Product-Oriented)
+
+Every `spec.md` must contain:
+- `Purpose`: Concise business goal.
+- `Acceptance criteria`: Atomic, verifiable business conditions using plain domain terms (Given/When/Then).
+- `Conceptual Interface Contract`: Input and output business information exchange elements (no physical API protocols, JSON fields, or camelCase keys).
+- `Business Rules & Edge Cases`: Constraints and error behaviors described from the user's/business's perspective. This includes business-level experience thresholds, data compliance retention, and core business limits.
+- Declared business-level side effects where relevant.
+
+## Technical Design minimum (100% Tech-Oriented)
+
+Every `design.md` must contain:
+- `Architectural & Protocol Overview`: Protocols, gateways, and topology.
+- `Business Contract Mapping`: A mapping table translating `spec.md`'s conceptual inputs/outputs to physical API fields, JSON keys, headers, or query params.
+- `Database Schema & Data Model`: Exact table names, column types, and indices (no physical schemas in spec.md).
+- `Detailed API & Class Design`: API endpoints, controllers, services, repositories, and cache strategies.
+- `Data Transition & Migration Design`: Local database migrations, schema version history, backward compatibility mapping, and local rollback SQL scripts (no server deployment steps). This includes technical mechanisms (caching, indexes, queues) used to satisfy the spec's business non-functional budgets.
+
+## Harness capability boundary
+
+The bundled harness provides deterministic baseline checks: repository structure, spec headings, artifact placement, coarse change-set drift, trace references, heuristic side-effect scanning, and configured verification commands. It does not inherently prove semantic correctness, complete side-effect safety, visual quality, migration safety, or production health. Those require project tests and environment-specific validation declared by the owning specs.
+
+## References
+
+- Read `references/sds-workflow.md` for the detailed lifecycle and verification model.
+- Read `references/sds-playbook.md` when initializing or upgrading a project.
+- Use `templates/spec.template.md`, `templates/design.template.md`, and `templates/harness.yaml` as starting points.
+- Use `scripts/sds_self_check.py` for cross-platform baseline validation and managed-harness refresh.

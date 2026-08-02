@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sds-cli"
+version = "1.0.0"
+description = "SDS (Spec-Defined Software) Command Line Tool & Verification Harness"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "DeepMind Advanced Agentic Coding Team" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    # Keep core cli standard-library-only to ensure zero dependencies.
+    # Optional dependencies can be defined for advanced features.
+]
+
+[project.optional-dependencies]
+mcp = ["mcp>=0.1.0"]  # Optional dependency for running as an MCP Server
+
+[project.scripts]
+sds = "sds.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["skills/sds-core/src/sds"]

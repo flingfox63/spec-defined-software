@@ -1,0 +1,84 @@
+site_name: SDS (Spec-Defined Software)
+site_description: The central operating system for AI-collaborative software delivery.
+site_url: https://your-org.github.io/spec-defined-software
+
+plugins:
+  - search
+  - i18n:
+      languages:
+        - locale: en
+          name: 🇺🇸 English
+          default: true
+        - locale: zh
+          name: 🇨🇳 中文
+
+extra_css:
+  - stylesheets/extra.css
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:pymdownx.emoji.twemoji
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Core Philosophy: philosophy.md
+  - The SDL Workflow: workflow.md
+  - CLI & Integration:
+      - Installation: cli/installation.md
+      - Pre-commit Hook: cli/pre-commit.md
+  - Ecosystem Skills:
+      - Overview: ecosystem/index.md
+      - sds-ideator (Ideation): ecosystem/ideator.md
+      - sds-architect (Design): ecosystem/architect.md
+      - sds-coder (Implementation): ecosystem/coder.md
+      - sds-qa (Quality Assurance): ecosystem/qa.md
+      - sds-ops (Deployment): ecosystem/ops.md
+  - Reference:
+      - Templates: reference/templates.md
+      - Playbook: reference/playbook.md
