@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sds-cli"
-version = "1.0.0"
+dynamic = ["version"]
 description = "SDS (Spec-Defined Software) Command Line Tool & Verification Harness"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -28,5 +28,13 @@ mcp = ["mcp>=0.1.0"]  # Optional dependency for running as an MCP Server
 [project.scripts]
 sds = "sds.cli:main"
 
+[tool.hatch.version]
+path = "skills/sds-core/src/sds/__init__.py"
+
 [tool.hatch.build.targets.wheel]
 packages = ["skills/sds-core/src/sds"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"skills/sds-core/SKILL.md" = "sds/_skill/sds/SKILL.md"
+"skills/sds-core/templates" = "sds/_skill/sds/templates"
+"references" = "sds/_skill/sds/references"

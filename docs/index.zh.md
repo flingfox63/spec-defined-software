@@ -22,13 +22,15 @@
 
 ## 🛠️ SDS 多技能生命周期工具链
 
-为了彻底摆脱被动的“代码语法校验（Linting）”并支持完整的需求交付流水线，SDS 编排并集成了多个专属的智能体技能（Agent Skills）：
+目前已发布的 `sds-core` Skill 提供规格校验、可追溯性检查、Git Hook
+和 MCP 接入。以下专用生命周期 Skill 描述的是产品路线图；是否可用以
+下方路线图表格中的状态为准：
 
-1. **`sds-ideator` (需求阶段)**：苏格拉底式需求风暴技能，引导开发者将模糊的用户诉求提炼为严密的、Gherkin 风格的验收准则（AC）。
-2. **`sds-architect` (设计阶段)**：自动将产品需求转换为正式的 API 契约、数据库 Schema 变更和技术架构模式。
-3. **`sds-coder` (实现阶段)**：拉起隔离的编码子智能体执行物理特征与单元测试编写，并自动维护 `@sds-trace` 代码注释覆盖率。
-4. **`sds-qa` (验证阶段)**：**🧪 核心质量闸门。** 自动将 `spec.md` 的 AC 以及 `user-journey.md`（User Story）的用户故事进行全自动 BDD 测试合成，实现全面的需求闭环校验。
-5. **`sds-ops` (交付阶段)**：使用基于 symlink 的原子化隔离部署环境，管理数据库迁移总账，并运行冒烟测试。
+1. **`sds-ideator`（需求阶段，进行中）**：计划提供苏格拉底式流程，将模糊诉求提炼为 Gherkin 风格的验收准则（AC）。
+2. **`sds-architect`（设计阶段，进行中）**：计划将已确认的产品规格转换为技术契约和 `design.md`。
+3. **`sds-coder`（实现阶段，规划中）**：计划辅助代码实现并维护 `@sds-trace` 覆盖。
+4. **`sds-qa`（验证阶段，规划中）**：计划提供 AC 驱动的测试合成与质量闸门。
+5. **`sds-ops`（交付阶段，规划中）**：计划提供原子化部署与回滚流程。
 
 ---
 
@@ -42,18 +44,54 @@
 curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/install.sh | sh
 ```
 
-### 2. 初始化项目
+### 2. 安装到 AI Agent 与常用 IDE
+
+自动识别当前已安装或项目正在使用的 Agent，安装已发布的 SDS Agent Skill，
+并自动配置 MCP：
+
+```bash
+sds install-agents
+```
+
+默认采用用户级安装，并根据可执行命令、应用、编辑器扩展或项目使用标记识别
+Agent；如果没有识别到 Agent，只安装共享 Skill，不写入任何 Agent 专属 MCP
+配置。也可以明确安装所有目标、指定部分目标，或只安装到某个项目：
+
+```bash
+sds install-agents --targets all
+sds install-agents --targets codex,opencode,claude,agy
+sds install-agents --targets cursor --scope project --project-dir /path/to/repo
+```
+
+支持的选择器包括 `shared`、`codex`、`opencode`、`claude`、`cursor`、`cline`、
+`antigravity`（别名 `agy`）、`gemini`、`copilot`（别名 `vscode`）、
+`windsurf`、`roo` 和 `kilo`。SDS 遵循 Agent Skills 目录标准；安装过程
+可幂等重复执行：支持 `.agents/skills` 的 Agent 共用一份 SDS Skill，只有
+必须使用专属发现目录的客户端才会获得独立副本。托管标记会记录 Skill
+包版本和内容哈希，旧版本会原位更新而不会产生重复副本。已有的非 SDS
+Skill、MCP 服务及其他配置都会保留。使用 `--no-mcp` 可只安装 Skill，使用
+`--dry-run` 可预览变更；`sds version` 会分别显示 CLI、校验 Harness 和 Skill
+包版本。
+
+### 3. 初始化项目
 在业务仓库根目录下执行骨架初始化：
 ```bash
 sds init
 ```
 这将生成配置文件 `.sds.harness.yaml` 并建立标准的 `specs/` 目录规范。
 
-### 3. 执行规范校验
+### 4. 执行规范校验
 对代码层注释、规格说明格式以及需求一致性进行全方位扫描：
 ```bash
 sds check
 ```
+
+### 可选的手动 MCP 配置与故障排查
+
+默认会自动配置 MCP。如果客户端找不到 CLI，可重新执行
+`sds install-agents --command /absolute/path/to/sds`；如果希望自行管理 MCP，
+请使用 `--no-mcp`。手动配置 stdio MCP 时，命令为 `sds`，参数为
+`["mcp"]`。
 
 ## 🗺️ 生态路线图 (Ecosystem Roadmap)
 
@@ -77,4 +115,5 @@ Spec-Defined Software (SDS) 非常荣幸继承了开源社区的优秀传统，�
 ---
 
 > [!NOTE]
-> SDS 与现代的多智能体协同框架和 MCP 协议完美兼容，为你的 AI 辅助编码助手（如 Cursor、Cline）提供最强大的后台校验武器。
+> 已发布的 `sds-core` Skill 可接入上方列出的 Agent Skills 与 MCP 环境。
+> 标为“进行中”或“规划中”的生命周期 Skill 会在正式发布后才进入安装包。

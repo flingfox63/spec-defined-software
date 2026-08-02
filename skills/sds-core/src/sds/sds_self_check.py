@@ -30,7 +30,7 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 SDS_MANAGED_HARNESS = True
-HARNESS_VERSION = "2026.08.01.2"
+HARNESS_VERSION = "2026.08.02.1"
 DRIFT_GUARDED_EXTENSIONS = {
     ".bash",
     ".cjs",

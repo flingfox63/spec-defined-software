@@ -1,0 +1,42 @@
+# SDS Validation Harness Configuration
+project_name: "Spec-Defined Software"
+spec_dir: "specs"
+review_dir: "specs_review"
+
+required_sections:
+  - "Purpose"
+  - "Acceptance criteria"
+  - "Interface / contract"
+
+enforce_drift_guard: true
+enforce_side_effects: true
+enforce_traceability: true
+enforce_artifact_placement: true
+enforce_module_boundaries: true
+
+verification_commands:
+  - ["{python}", "-m", "unittest", "discover", "-s", "skills/sds-core/tests", "-v"]
+
+authoritative_context_files:
+  - "system-blueprint.md"
+  - "user-journey.md"
+  - "business-flow.md"
+  - "domain-model.md"
+  - "change-history.md"
+  - "glossary.md"
+  - "README.md"
+  - "README.zh.md"
+
+# Generated documentation and the independently-scaffolded example project
+# are validated by their own build/project context, not as root source files.
+ignore_dirs:
+  - ".git"
+  - ".venv"
+  - "venv"
+  - "env"
+  - "node_modules"
+  - "__pycache__"
+  - "*.egg-info"
+  - ".idea"
+  - "site"
+  - "examples"
