@@ -16,6 +16,7 @@ enforce_drift_guard: true       # Ensure code/UI changes have corresponding spec
 enforce_side_effects: true      # Statically check database or external API operations against spec metadata
 enforce_traceability: true      # Ensure code features trace back to specs with @sds-trace annotations
 enforce_artifact_placement: true # Keep assessments, plans, and diagnostics in specs_review/
+enforce_ac_derivation: true
 enforce_module_boundaries: true # Require module _context and path-aligned capability IDs
 
 # Optional project-quality gate. Commands run directly without shell expansion.

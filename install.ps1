@@ -78,18 +78,19 @@ function Install-AgentIntegrations ($SdsCommand) {
         return 1
     }
 
-    Print-Info "Installing SDS integrations for supported agents and IDEs..."
+    Print-Info "Installing SDS Agent Skills for detected agents (use --targets to select; MCP is opt-in)..."
     # Keep the CLI's output visible without allowing it to become part of this
     # function's numeric return value in PowerShell's success-output pipeline.
-    & $SdsCommand install-agents --targets detected --command $SdsCommand | Out-Host
+    & $SdsCommand install-agents --command $SdsCommand | Out-Host
     $Status = $LASTEXITCODE
     if ($Status -ne 0) {
         Print-Error "SDS CLI was installed, but agent integration failed (exit code $Status)."
-        Print-Error "Re-run: `"$SdsCommand`" install-agents --targets detected --command `"$SdsCommand`""
+        Print-Error "Re-run: `"$SdsCommand`" install-agents --command `"$SdsCommand`""
         return $Status
     }
 
     Print-Success "Agent and IDE integrations installed successfully."
+    Print-Info "Optional MCP setup: `"$SdsCommand`" install-agents --with-mcp --command `"$SdsCommand`""
     return 0
 }
 
@@ -225,7 +226,7 @@ $SdsBatPath = Join-Path $BinDir "sds.bat"
 Print-Success "Command wrapper script created at: $SdsBatPath"
 
 # 5. Install integrations only after the exact executable path is known. The
-# same absolute path is persisted into generated MCP configurations.
+# absolute path is also available for an optional later MCP installation.
 $AgentInstallStatus = Install-AgentIntegrations $SdsCommand
 if ($AgentInstallStatus -ne 0) {
     exit $AgentInstallStatus

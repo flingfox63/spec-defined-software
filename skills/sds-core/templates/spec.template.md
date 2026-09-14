@@ -1,13 +1,29 @@
 ---
 capability_id: <module>.<capability_name>
 status: defined  # options: defined, implemented, deprecated
-version: 2.0.0
+version: 1.0.0
+ac_derivation:
+  AC-1:
+    scenario: ../_context/user-journey.md
+    reasoning: "<Explain why this outcome follows from the actor, initial state and goal>"
+    ambiguity: "<Record the chosen interpretation and rejected alternative, or none>"
+    validation: "<State a positive outcome and a boundary or counterexample outcome>"
+  AC-2:
+    scenario: ../_context/user-journey.md
+    reasoning: "<Explain why this outcome follows from the actor, initial state and goal>"
+    ambiguity: "<Record the chosen interpretation and rejected alternative, or none>"
+    validation: "<State a positive outcome and a boundary or counterexample outcome>"
+  AC-3:
+    scenario: ../_context/user-journey.md
+    reasoning: "<Explain why this outcome follows from the actor, initial state and goal>"
+    ambiguity: "<Record the chosen interpretation and rejected alternative, or none>"
+    validation: "<State a positive outcome and a boundary or counterexample outcome>"
 ---
 
 # Capability Specification: <Capability Name>
 
 ## 1. Purpose
-A concise statement of the business goal. Explain what problem this capability solves for the user, and why it is necessary.
+Identify the actor, initial business state, goal and observable outcome from accepted `_context/`. A concise statement of the business goal. Explain what problem this capability solves for the user, and why it is necessary.
 
 ## 2. Acceptance Criteria
 Provide a list of verifiable conditions. Keep them clear, atomic, and testable using plain business/domain terms:
@@ -36,3 +52,16 @@ Detailed business constraints, validation rules, and specific edge case behavior
 
 ## 5. Operational Contract (When Applicable)
 Define business-level lifecycle operational goals (e.g., retention, compliance, auditing rules). Keep technical choices (e.g. database schema migrations, deployment scripts, cron setups) in `design.md`.
+
+## Authoring check
+For every AC, complete `ac_derivation` above using business language and an
+existing durable context path (optionally a heading anchor). Compare plausible
+interpretations against the scenario. If the context cannot choose between
+materially different outcomes, ask the user and block the dependent work.
+Do not fill accepted reasoning from the current code or leave placeholder text.
+
+Example business AC: Given an unpaid order / When the buyer cancels / Then the
+order is cancelled and no payment is collected. Locking, transaction boundaries,
+endpoint names, JSON keys and table columns belong in `design.md`. User-visible
+compatibility or performance promises remain business requirements when needed.
+Never reference temporary review artifacts; promote accepted conclusions here.

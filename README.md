@@ -75,23 +75,22 @@ irm https://raw.githubusercontent.com/flingfox63/spec-defined-software/main/inst
 ```
 
 The one-click installer also installs the released SDS Agent Skill for supported
-agents and IDEs, and configures MCP where the client has a writable config
-format. You can rerun that step independently with:
+agents and IDEs. MCP configuration is opt-in; installation and upgrades
+leave existing MCP files untouched by default. You can rerun that step independently with:
 
 ```bash
 sds install-agents
 ```
 
-The default is `--targets detected --scope user`: SDS looks for installed agent
-commands, applications, extensions, and project-use markers, then configures
-only the agents it can identify. If no agent is detected, it installs only the
-shared Agent Skill and does not create agent-specific MCP settings. Use
-`--targets all` for every supported integration. Agents that discover
+The default is `--targets detected --scope user`: SDS selects agents from
+independent local evidence, falling back to the shared Skill when none are found.
+Use `--targets opencode,claude` to choose which agents to install or upgrade,
+or `--targets all` for every supported integration. Agents that discover
 `.agents/skills` share one SDS bundle; agent-specific copies are created only
 where the selected scope requires them. Use `--scope project --project-dir
 PATH` when the integration should belong to one repository instead. Cline uses
 `.cline/skills`; Windsurf uses the shared `.agents/skills` bundle. Canonical
-SDS-only MCP entries follow an upgraded executable path automatically, while
+SDS-only MCP entries follow an upgraded executable path when `--with-mcp` is selected, while
 customized entries remain preserved.
 
 ---
@@ -102,11 +101,22 @@ Once installed, the `sds` command suite is available globally:
 
 * **`sds init`**: Scaffolds a new SDS directory workspace in the active folder, adding the `.sds.harness.yaml` configuration and `specs/` blueprint subfolders.
 * **`sds check`**: Runs standard compliance and spec-to-code drift checking.
-* **`sds install-agents`**: Detects installed agents, installs the released SDS Agent Skill, and configures the matching SDS MCP entries.
+* **`sds install-agents`**: Detects local agents and installs the released SDS Agent Skill; `--with-mcp` opts into MCP configuration.
 * **`sds mcp`**: Spawns a 100% standard-compliant stdio Model Context Protocol (MCP) JSON-RPC server for IDE-integrated AI assistants.
 * **`sds version`**: Prints the CLI, harness, and released Skill bundle versions separately.
 
 ---
+
+## Scenario-grounded acceptance and upgrades
+
+Every AC now requires an `ac_derivation` record with a durable context source,
+business reasoning, ambiguity disposition and positive/counterexample expectations.
+New projects enable the gate explicitly. Older projects missing the policy key receive one migration warning and retain earlier checks; backfill records before setting `enforce_ac_derivation: true`. A
+complete record is a structural check; independently review each interpretation
+against the user scenario. Keep business results in spec and per-AC mechanisms
+and test mappings in design. Durable documents must not reference temporary
+review artifacts in any notation. See the [workflow](docs/workflow.md) and
+[templates and migration guidance](docs/reference/templates.md).
 
 ## 🤖 AI Agent Integration (Agent Skills + MCP)
 
@@ -137,12 +147,12 @@ such as `sds-ideator` and `sds-coder` are not presented as available before they
 ship.
 
 Useful options include `--command PATH` to record a specific SDS executable,
-`--no-mcp` to install only the Agent Skill, `--force` to replace SDS-managed
+`--with-mcp` to opt into MCP configuration (`--no-mcp` remains a default-mode alias), `--force` to replace SDS-managed
 content, and `--dry-run` to preview changes.
 
 Manual MCP setup is therefore optional. If automatic configuration is not
 supported by a particular client, or you are troubleshooting executable
-discovery, add the following entry to that client's MCP settings and restart
+discovery, for clients using `mcpServers`, add the following entry to that client's MCP settings and restart
 the client:
 
 ```json
@@ -158,7 +168,9 @@ the client:
 
 If the client cannot find `sds`, replace `"command": "sds"` with the absolute
 path reported by `which sds` (macOS/Linux) or `Get-Command sds` (PowerShell), or
-re-run `sds install-agents --command /absolute/path/to/sds`.
+re-run `sds install-agents --with-mcp --command /absolute/path/to/sds`.
+OpenCode defaults to its v1 configuration layout; use `--opencode-config-version v2`
+only for v2 clients. See [installation and recovery](docs/cli/installation.md).
 
 ---
 
@@ -190,3 +202,5 @@ We extend the original `spec-kit` patterns by introducing automated zero-drift l
 ## 📄 License
 
 Distributed under the **MIT License**. See `LICENSE` for details.
+
+See the [validation roadmap](docs/roadmap.md) for planned behavior evaluation, rule consistency checks and negative fixtures.

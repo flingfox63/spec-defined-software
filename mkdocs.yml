@@ -67,6 +67,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Validation Roadmap: roadmap.md
   - Core Philosophy: philosophy.md
   - The SDL Workflow: workflow.md
   - CLI & Integration:

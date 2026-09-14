@@ -9,6 +9,8 @@ This module handles secure user authentication, token issuance, and password ver
 1. **User Login**:
    - Given a registered user with valid credentials.
    - When the user submits their username and password.
+   - Unknown usernames and incorrect passwords are denied with their corresponding business reason.
+   - Successful login requests a security audit record.
    - Then the system verifies the password and, when the account is active, issues a secure signed token.
    - If the account is suspended, the system denies login without issuing a token or recording a successful-login audit entry.
 2. **Accessing Protected Resources**:

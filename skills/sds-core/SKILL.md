@@ -2,7 +2,7 @@
 name: sds
 description: "Apply Spec-Defined Software (SDS) to software changes, audits, refactors, frontend/backend work, database migrations, release automation, and spec/code alignment. Use when a project has specs/, .sds.harness.yaml, or asks for spec-first delivery, zero-drift verification, technical assessment placement, pre-release checks, or SDS self-check maintenance."
 metadata:
-  version: "1.2.1"
+  version: "1.2.2"
 ---
 
 # SDS — Spec-Defined Software (Requirement Delivery Version)
@@ -37,6 +37,41 @@ When given a raw User Scenario (e.g., qualitative user requests or behavioral ne
 3. **Formulate Gherkin-Style Acceptance Criteria**: Translate the user scenario into precise, atomic, and verifiable Acceptance Criteria (ACs) using the `Given-When-Then` format. Ensure ACs cover both the happy path and critical business boundaries (e.g., data compliance, error state constraints, and user experience thresholds).
 4. **Draft Conceptual Interface Contracts**: Extract the conceptual elements that must flow in and out of the capability (e.g., "User credentials", "Validation status") as defined by the scenario. Never use physical keys, physical endpoints, or camelCase terminology here.
 5. **Enforce Local Invariants**: Identify and document any business rules or invariants that must remain unbroken (e.g., "A user cannot login if their account status is suspended").
+
+## Per-AC scenario derivation gate
+
+For EVERY AC (including errors, permissions, retries and recovery), record an
+`ac_derivation` frontmatter entry in spec.md with `scenario`, `reasoning`,
+`ambiguity`, and `validation`. The scenario is a relative existing Markdown path
+under durable `_context/` (optional heading fragment). Record business reasoning,
+the selected interpretation and why alternatives contradict the actor's goal or
+state; use `none` only after checking for ambiguity. Validation states observable
+positive and counterexample outcomes, not implementation-derived assertions.
+Unresolved material choices block dependent implementation; ask only for those
+choices and continue independent work. Never infer intended behavior from code.
+
+The default `sds check` gate checks 100% record coverage, valid context references
+and resolved non-placeholder fields for all ACs. It does NOT prove prose is true.
+Perform a separate spec-only pass: reconstruct each scenario, challenge the chosen
+interpretation with a counterexample, and verify the outcome against context.
+Record accepted conclusions in spec/context and temporary review evidence in the
+review workspace. For each AC, design.md maps the technical mechanism to positive
+and boundary tests. Revisit all affected derivations when context or ACs change.
+
+## Business specification and technical design
+
+Write spec.md for the actor/product reader: goals, business state transitions,
+observable outcomes, concepts, constraints and failure meaning. Write design.md
+for the implementer: protocols, physical fields, classes, schema, concurrency,
+retries and verification mapping. Example: "Cancellation prevents collection on
+an unpaid order" belongs in spec; "compare-and-set the payment state inside a
+transaction" belongs in design. Keep user-visible compatibility and performance
+promises in spec when they are actual requirements. Mark inapplicable design
+sections with a reason instead of inventing technical infrastructure.
+
+Durable documents must be self-contained: no inline links, reference links, HTML,
+bare paths, escaped paths or code references to temporary review artifacts.
+Promote the accepted conclusion and cite durable context instead.
 
 ## Start every task
 
@@ -203,3 +238,10 @@ When tasked with a pure "review", "audit", "diagnose", or "check" assignment, th
 - Read `references/sds-playbook.md` when initializing or upgrading a project.
 - Use `templates/spec.template.md`, `templates/design.template.md`, and `templates/harness.yaml` as starting points.
 - Use the globally packaged `sds check` command for cross-platform baseline validation and zero-drift checks.
+
+### Derivation policy migration
+New scaffolds explicitly enable `enforce_ac_derivation: true`. Existing projects
+missing this key retain previous checks and receive one migration warning per
+run. Backfill every AC from accepted context before enabling the gate. Explicit
+false skips it with one warning. A skipped gate never proves scenario alignment;
+the per-AC authoring and semantic review requirements still apply.

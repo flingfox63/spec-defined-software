@@ -355,7 +355,7 @@ def _uses_detection(spec: Union[str, Sequence[str], None]) -> bool:
 
 
 def resolve_targets(
-    spec: Union[str, Sequence[str], None] = "all",
+    spec: Union[str, Sequence[str], None] = "detected",
     detected_targets: Optional[Sequence[AgentTarget]] = None,
 ) -> List[AgentTarget]:
     """Resolve target names, ``all``, or a context-provided detected set."""
@@ -668,6 +668,7 @@ def _install_json_mcp(
     style: str,
     force: bool,
     dry_run: bool,
+    opencode_config_version: str = "v1",
 ) -> Tuple[str, str]:
     if path.exists():
         if not path.is_file():
@@ -687,14 +688,50 @@ def _install_json_mcp(
     else:
         document = {}
 
+    migrated = False
     if style == "opencode-json":
+        # @sds-trace: agent_integration.install_agents:AC-9
         mcp = document.setdefault("mcp", {})
         if not isinstance(mcp, dict):
             return "error", "existing 'mcp' value is not an object"
-        servers = mcp.setdefault("servers", {})
-        if not isinstance(servers, dict):
-            return "error", "existing 'mcp.servers' value is not an object"
         desired = {"type": "local", "command": [command, "mcp"]}
+        legacy = None
+        has_legacy = False
+        if opencode_config_version == "v1":
+            if "timeout" in mcp and isinstance(mcp["timeout"], dict) and "type" not in mcp["timeout"]:
+                return "error", "OpenCode v2 timeout defaults preserved; select --opencode-config-version v2 or migrate settings manually"
+            servers = mcp
+            if "servers" in mcp:
+                nested = mcp["servers"]
+                # A legitimate v1 server can itself be named 'servers'.
+                if isinstance(nested, dict) and "type" in nested:
+                    pass
+                elif isinstance(nested, dict) and set(nested) == {SKILL_NAME}:
+                    legacy = nested[SKILL_NAME]
+                    has_legacy = True
+                else:
+                    return "error", "mixed OpenCode layout preserved; select --opencode-config-version v2 or migrate non-SDS servers manually"
+        else:
+            if set(mcp) - {"servers", "timeout", SKILL_NAME}:
+                return "error", "v1 OpenCode servers preserved; migrate non-SDS servers before selecting v2"
+            if "timeout" in mcp and (not isinstance(mcp["timeout"], dict) or "type" in mcp["timeout"]):
+                return "error", "ambiguous OpenCode timeout settings preserved; review configuration manually"
+            servers = mcp.setdefault("servers", {})
+            if not isinstance(servers, dict) or "type" in servers:
+                return "error", "ambiguous OpenCode servers layout preserved; review configuration manually"
+            legacy = mcp.get(SKILL_NAME)
+            has_legacy = SKILL_NAME in mcp
+        if has_legacy:
+            if SKILL_NAME in servers or not (
+                legacy == desired or _is_canonical_legacy_json_mcp(legacy, style)
+            ):
+                return "error", "customized or duplicate legacy OpenCode SDS entry preserved; review configuration manually"
+            if opencode_config_version == "v1":
+                del mcp["servers"]
+            else:
+                del mcp[SKILL_NAME]
+            servers[SKILL_NAME] = legacy
+            migrated = True
     else:
         servers = document.setdefault("mcpServers", {})
         if not isinstance(servers, dict):
@@ -702,16 +739,18 @@ def _install_json_mcp(
         desired = {"command": command, "args": ["mcp"]}
 
     existing = servers.get(SKILL_NAME)
-    if existing == desired:
+    if existing == desired and not migrated:
         return "unchanged", "MCP server is already current"
     # Earlier SDS releases emitted one exact, SDS-only shape for each JSON
     # style. A path change in that shape is an installer upgrade, not a
     # user-owned conflict. Any additional fields or behavior remain preserved.
     # @sds-trace: agent_integration.install_agents:AC-7
     canonical_upgrade = _is_canonical_legacy_json_mcp(existing, style)
-    if existing is not None and not force and not canonical_upgrade:
+    if existing is not None and existing != desired and not force and not canonical_upgrade:
         return "skipped", "existing user-owned 'sds' MCP entry was preserved"
     if dry_run:
+        if migrated:
+            return "planned", "would migrate SDS MCP server to OpenCode {} layout".format(opencode_config_version)
         if canonical_upgrade:
             return "planned", "would advance canonical SDS MCP server command"
         return "planned", "would {} MCP server entry".format(
@@ -720,6 +759,8 @@ def _install_json_mcp(
 
     servers[SKILL_NAME] = desired
     _atomic_write_text(path, json.dumps(document, indent=2, ensure_ascii=False) + "\n")
+    if migrated:
+        return "changed", "migrated SDS MCP server to OpenCode {} layout".format(opencode_config_version)
     if canonical_upgrade:
         return "changed", "advanced canonical SDS MCP server command"
     return "changed", "configured SDS MCP server"
@@ -840,13 +881,16 @@ def install_agent_integrations(
     scope: str = "user",
     targets: Union[str, Sequence[str], None] = "detected",
     command: str = "sds",
-    configure_mcp: bool = True,
+    configure_mcp: bool = False,
     force: bool = False,
     dry_run: bool = False,
     skill_source: Optional[Path] = None,
+    opencode_config_version: str = "v1",
 ) -> InstallSummary:
     """Install the SDS skill and optionally its MCP server registrations."""
 
+    if opencode_config_version not in ("v1", "v2"):
+        raise ValueError("opencode_config_version must be v1 or v2")
     if scope not in ("user", "project"):
         raise ValueError("scope must be 'user' or 'project'")
     home = Path.home() if home is None else Path(home)
@@ -934,6 +978,7 @@ def install_agent_integrations(
                         )
                     )
 
+        # @sds-trace: agent_integration.install_agents:AC-8
         if not configure_mcp or not target.mcp_style:
             continue
         mcp_path = _target_mcp_path(target, scope, home, project_dir)
@@ -959,7 +1004,8 @@ def install_agent_integrations(
                 )
             else:
                 status, message = _install_json_mcp(
-                    mcp_path, command, target.mcp_style, force, dry_run
+                    mcp_path, command, target.mcp_style, force, dry_run,
+                    opencode_config_version=opencode_config_version,
                 )
         except Exception as exc:
             status, message = "error", "MCP configuration failed: {}".format(exc)
@@ -1001,8 +1047,19 @@ def build_parser() -> argparse.ArgumentParser:
         default=_default_command(),
         help="sds executable stored in MCP configurations",
     )
+    mcp_options = parser.add_mutually_exclusive_group()
+    mcp_options.add_argument(
+        "--with-mcp", dest="configure_mcp", action="store_true",
+        help="Opt in to configuring SDS MCP entries (default: skills only)",
+    )
+    mcp_options.add_argument(
+        "--no-mcp", dest="configure_mcp", action="store_false",
+        help="Install skills only (compatibility alias for the default)",
+    )
+    parser.set_defaults(configure_mcp=False)
     parser.add_argument(
-        "--no-mcp", action="store_true", help="Install Agent Skills without MCP entries"
+        "--opencode-config-version", choices=("v1", "v2"), default="v1",
+        help="OpenCode configuration generation (default: v1)",
     )
     parser.add_argument(
         "--force",
@@ -1076,7 +1133,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             scope=args.scope,
             targets=args.targets,
             command=args.command,
-            configure_mcp=not args.no_mcp,
+            configure_mcp=args.configure_mcp,
+            opencode_config_version=args.opencode_config_version,
             force=args.force,
             dry_run=args.dry_run,
         )
@@ -1084,6 +1142,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         parser.error(str(exc))
         return 2
     _print_summary(summary)
+    if not args.configure_mcp:
+        print("[INFO] MCP settings untouched. To opt in: sds install-agents --with-mcp --targets TARGET")
     return 0 if summary.ok else 1
 
 

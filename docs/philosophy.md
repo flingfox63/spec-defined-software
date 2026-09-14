@@ -28,7 +28,8 @@ To prevent physical details from corrupting business specifications, SDS enforce
 In SDS, a specification is a **living, executable contract**. 
 * **Zero-Drift**: Any modification to a spec's business criteria must trigger corresponding changes in physical code and tests, and vice versa. 
 * **Bidirectional Traceability**: Every Gherkin-style Acceptance Criterion (`AC-n`) is physically linked to implementation lines and unit tests using the `@sds-trace` anchor.
-* The `sds check` engine statically guarantees this alignment. If a developer introduces an un-documented "stealth feature" or forgets to update tests for a modified requirement, the build fails. This closes the loop between business intent and physical reality.
+* The `sds check` engine provides structural guards: coarse change-set drift detection, valid trace identifiers, per-AC derivation records and configured project checks. It does not prove semantic alignment or independently establish both implementation and test coverage.
+* Every AC records its durable scenario source, reasoning, ambiguity disposition and positive/counterexample expectations. A separate scenario review challenges each interpretation; design maps each AC to technical mechanisms and tests.
 
 ---
 
@@ -83,7 +84,7 @@ When multiple teams and projects inside an organization adopt SDS, copying raw v
 To avoid cluttering Git with research and temporary files, SDS enforces a strict separation:
 
 * **`specs_review/` (Temporary drafting kitchen)**: Local-only, gitignored directory. This is where you put raw brainstorming, execution plans, technical assessments, diagnostic logs, and verification runtimes.
-* **`specs/` (Durable dining room)**: Authoritative, git-tracked directory. Once a design proposal is accepted, the final agreed-upon conclusions are promoted into `specs/` as clean `spec.md`, `design.md` and `_context/` files.
+* **`specs/` (Durable dining room)**: Authoritative, git-tracked directory. Once a design proposal is accepted, the final agreed-upon conclusions are promoted into `specs/` as clean `spec.md`, `design.md` and `_context/` files. These documents must remain usable after the review workspace is deleted: no links, reference definitions, HTML or bare/escaped paths to temporary artifacts.
 
 ---
 

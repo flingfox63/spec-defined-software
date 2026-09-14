@@ -20,6 +20,8 @@
 
 ## Agent Usage Instructions
 When an LLM agent activates the `sds-ideator` skill, it must:
-1. Actively grill the user on business boundaries.
+1. Resolve business boundaries from accepted context; ask only when material ambiguity remains.
 2. Identify actors, preconditions, happy paths, and error constraints.
 3. Establish the schema structures conceptually (no physical datatypes or programming language terms).
+
+For every AC, record the durable scenario source, business inference, ambiguity disposition and positive/counterexample expectations in `ac_derivation`. Promote accepted conclusions without referencing temporary review artifacts.
