@@ -77,13 +77,14 @@ install_agent_integrations() {
         return 1
     fi
 
-    print_info "Installing SDS integrations for supported agents and IDEs..."
-    if "$SDS_AGENT_COMMAND" install-agents --targets detected --command "$SDS_AGENT_COMMAND"; then
+    print_info "Installing SDS Agent Skills for detected agents (use --targets to select; MCP is opt-in)..."
+    if "$SDS_AGENT_COMMAND" install-agents --command "$SDS_AGENT_COMMAND"; then
         print_success "Agent and IDE integrations installed successfully."
+        print_info "Optional MCP setup: \"$SDS_AGENT_COMMAND\" install-agents --with-mcp --command \"$SDS_AGENT_COMMAND\""
     else
         SDS_AGENT_STATUS=$?
         print_error "SDS CLI was installed, but agent integration failed (exit code $SDS_AGENT_STATUS)."
-        print_error "Re-run: \"$SDS_AGENT_COMMAND\" install-agents --targets detected --command \"$SDS_AGENT_COMMAND\""
+        print_error "Re-run: \"$SDS_AGENT_COMMAND\" install-agents --command \"$SDS_AGENT_COMMAND\""
         return "$SDS_AGENT_STATUS"
     fi
 }
@@ -185,7 +186,7 @@ ln -s "$VENV_DIR/bin/sds" "$BIN_DIR/sds"
 print_success "Symlink created at: $BIN_DIR/sds"
 
 # 5. Install integrations only after the exact executable path is known. The
-# same absolute path is persisted into generated MCP configurations.
+# absolute path is also available for an optional later MCP installation.
 install_agent_integrations "$SDS_COMMAND"
 
 # --- Output Path Verification ---

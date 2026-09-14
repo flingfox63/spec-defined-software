@@ -87,8 +87,8 @@ The Agent automatically executes the verification task in the background:
 AI 代理自动在后台调用自检器与项目验证：
 
 ```text
-Behind-the-scenes task: Runs sds_self_check.py & project unit tests.
-后台执行任务：调用 sds_self_check.py 自检与项目单元测试。
+Behind-the-scenes task: Runs sds check & project unit tests.
+后台执行任务：调用 sds check 自检与项目单元测试。
 ```
 
 Once all tests and zero-drift checks return green, the Agent delivers the completed requirement:
@@ -244,7 +244,7 @@ SDS 建立了清晰的业务角色分工与交互流，确保规范始终是唯�
           │                                  │                                  │
           │                                  │                             4. Verification
           │                                  │                                (Runs project tests,
-          │                                  │                                 sds_self_check.py)
+          │                                  │                                 sds check)
           │ <───[Passes Evidence & Green]───────────────────────────────────────│
           │                                                                      │
     5. Requirement Delivered!                                                    │
@@ -270,8 +270,8 @@ SDS 建立了清晰的业务角色分工与交互流，确保规范始终是唯�
 ### 6.3 Verifier / QA / AI Agent (校验者/测试与 AI 代理职责)
 - **Primary Ownership**: Verifies that the **"How"** perfectly and provably satisfies the **"What"** defined by the original **User Scenario**.
   **核心职责**：验证 **“怎么做”** 在逻辑与事实上完全满足初始 **用户场景** 所定义的 **“做什么”** 预期。
-- **Artifacts Handled**: Runs `python sds_self_check.py` to assert zero spec/code drift, runs full project verification test suites, and records temporary execution run logs or visual snapshots under `specs_review/<module>/<capability>/verification/`.
-  **经手资产**：运行本地 `sds_self_check.py` 自检程序保障规范 zero-drift，运行项目测试套件，并在 `specs_review/` 的 `verification/` 目录下记录临时验证证据与日志。
+- **Artifacts Handled**: Runs `sds check` to assert zero spec/code drift, runs full project verification test suites, and records temporary execution run logs or visual snapshots under `specs_review/<module>/<capability>/verification/`.
+  **经手资产**：运行 `sds check` 自检命令保障规范 zero-drift，运行项目测试套件，并在 `specs_review/` 的 `verification/` 目录下记录临时验证证据与日志。
 - **Rule**: Only approve requirement delivery once both the SDS structural baseline and custom project validation commands return 100% success.
   **基本原则**：只有当 SDS 结构基线自检和项目自定义校验命令全部返回 100% 成功时，方可批准需求交付。
 
@@ -291,7 +291,7 @@ Follow this logical sequence for every requirement change:
                                  ↓
     Implement Code, Migrations & Tests (编写代码、数据库迁移与测试)
                                  ↓
-       Run sds_self_check.py & Verification (运行自检与项目测试验证)
+       Run sds check & Verification (运行自检与项目测试验证)
 ```
 
 ### 7.1 Specification Definition First / 规范定义先行
@@ -377,7 +377,7 @@ When integrated into an active agentic execution host, SDS maps smoothly to stan
 * **Socratic Brainstorming (苏格拉底式头脑风暴)**: The agent applies brainstorming to raw User Scenarios, clarifying business rules and edge cases before writing the first line of specs under `specs_review/`. / 在草稿区动笔前，对原始用户场景进行头脑风暴，明确边界并提炼为 Given-When-Then 验收条件。
 * **Defensive Task Planning (防御性微计划)**: The agent breaks down technical mappings in `design.md` into highly modular, bite-sized tasks, each targeting specific file paths with clear local verification checks. / 将 `design.md` 下的物理契约拆解为防御性的微任务计划，精确到具体文件路径与防御性校验步骤。
 * **Subagent-Driven Development (SDD / 子智能体驱动开发)**: Spawns fresh, isolated subagents to implement technical code in `src/` and tests in `tests/` without spilling irrelevant parent context. / 针对每个子任务唤醒完全隔离的专职子智能体，干净地生成 `src/` 代码和 `tests/` 测试用例，植入 `@sds-trace`。
-* **Verification-Before-Completion (完成前置校验)**: Triggers the project's local `sds_self_check.py` baseline and test suites before declaring a requirement delivered. / 在最终确认完成前，自动运行项目自检脚本和测试，防止任何规范与代码偏离。
+* **Verification-Before-Completion (完成前置校验)**: Triggers the project's local `sds check` baseline and test suites before declaring a requirement delivered. / 在最终确认完成前，自动运行项目自检脚本和测试，防止任何规范与代码偏离。
 
 ---
 
@@ -392,3 +392,17 @@ Always use clear, factual phrasing when reporting results to avoid overclaiming 
   仅在 `.sds.harness.yaml` 中自定义声明的所有测试套件、类型检查和编译构建命令运行成功后，才使用 **“Project verification passed”（项目验证通过）**。
 - Never state "everything is verified" or "ready for production deployment" based purely on local SDS checker success, as runtime environments and cloud release checks are handled by downstream ops pipelines.
   严禁仅凭本地 SDS 检查成功就声称“全部通过”或“可直接发布生产”，因为运行环境和云端发布校验应继续由下游发布流水线保障。
+
+## Per-AC derivation / 逐项场景推导
+
+Every AC must include an `ac_derivation` record in spec frontmatter with
+`scenario`, `reasoning`, `ambiguity`, and `validation`. The enabled checker
+requires full coverage and an existing durable context source. Read the scenario
+first, compare plausible interpretations, and independently derive positive and
+counterexample outcomes before reading code. Record mechanisms and per-AC test
+mapping in design. Structural completeness is not semantic proof.
+
+每个 AC 都必须记录持久上下文来源、推导理由、歧义取舍和业务验证预期。
+从用户角色、初始业务状态与目标出发，对候选解释做反例检查；有实质业务
+差异且上下文无法确定时，只暂停依赖该决定的工作并询问用户。
+spec 写业务结果，design 写实现机制与逐项测试映射，不从现有代码反推需求。

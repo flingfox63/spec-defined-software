@@ -46,16 +46,16 @@ curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/ma
 
 ### 2. 安装到 AI Agent 与常用 IDE
 
-自动识别当前已安装或项目正在使用的 Agent，安装已发布的 SDS Agent Skill，
-并自动配置 MCP：
+默认检测本地 Agent 并安装已发布的 SDS Agent Skill，
+默认不修改 MCP 配置：
 
 ```bash
 sds install-agents
 ```
 
-默认采用用户级安装，并根据可执行命令、应用、编辑器扩展或项目使用标记识别
-Agent；如果没有识别到 Agent，只安装共享 Skill，不写入任何 Agent 专属 MCP
-配置。也可以明确安装所有目标、指定部分目标，或只安装到某个项目：
+默认采用用户级安装并自动检测；没有检测结果时仅安装共享 Skill。
+使用 `--targets opencode,claude` 选择要安装或升级的 Agent，
+也可以安装所有目标，或只安装到某个项目：
 
 ```bash
 sds install-agents --targets all
@@ -69,7 +69,8 @@ sds install-agents --targets cursor --scope project --project-dir /path/to/repo
 可幂等重复执行：支持 `.agents/skills` 的 Agent 共用一份 SDS Skill，只有
 必须使用专属发现目录的客户端才会获得独立副本。托管标记会记录 Skill
 包版本和内容哈希，旧版本会原位更新而不会产生重复副本。已有的非 SDS
-Skill、MCP 服务及其他配置都会保留。使用 `--no-mcp` 可只安装 Skill，使用
+Skill、MCP 服务及其他配置都会保留。需要 MCP 时显式使用 `--with-mcp`；
+`--no-mcp` 保留为默认行为的兼容别名。使用
 `--dry-run` 可预览变更；`sds version` 会分别显示 CLI、校验 Harness 和 Skill
 包版本。
 
@@ -86,11 +87,18 @@ sds init
 sds check
 ```
 
+每个 AC 都需要场景推导记录：持久上下文来源、推导理由、歧义取舍和正例／反例预期。
+新项目显式启用推导检查；旧项目缺少配置键时只提示一次迁移警告，补齐记录后设置 `enforce_ac_derivation: true` 启用。spec 描述业务结果，design 逐项承接
+技术机制和测试；结构完整不代表语义正确，仍需对照上下文独立审阅。持久文档禁止以
+任何引用方式依赖临时评审文件。详见[工作流](workflow.md)和[模板](reference/templates.md)。
+
 ### 可选的手动 MCP 配置与故障排查
 
-默认会自动配置 MCP。如果客户端找不到 CLI，可重新执行
-`sds install-agents --command /absolute/path/to/sds`；如果希望自行管理 MCP，
-请使用 `--no-mcp`。手动配置 stdio MCP 时，命令为 `sds`，参数为
+需要 MCP 时执行 `sds install-agents --with-mcp --targets TARGET`。
+如果客户端找不到 CLI，追加 `--command /absolute/path/to/sds`。
+OpenCode 默认使用 v1 配置；v2 客户端需追加 `--opencode-config-version v2`。
+旧版 SDS 写入的标准嵌套配置会在显式安装 MCP 时安全迁移；自定义或混合配置
+保持原样并报错提示人工处理。手动配置 stdio MCP 时，命令为 `sds`，参数为
 `["mcp"]`。
 
 ## 🗺️ 生态路线图 (Ecosystem Roadmap)
@@ -117,3 +125,5 @@ Spec-Defined Software (SDS) 非常荣幸继承了开源社区的优秀传统，�
 > [!NOTE]
 > 已发布的 `sds-core` Skill 可接入上方列出的 Agent Skills 与 MCP 环境。
 > 标为“进行中”或“规划中”的生命周期 Skill 会在正式发布后才进入安装包。
+
+后续行为评估、规则一致性与反例集计划见 [Validation roadmap](roadmap.md)。

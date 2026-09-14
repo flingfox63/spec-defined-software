@@ -47,16 +47,15 @@ curl -fsSL https://raw.githubusercontent.com/flingfox63/spec-defined-software/ma
 
 ### 2. Install into AI agents and IDEs
 
-Auto-detect installed agents, install the released SDS Agent Skill, and
-configure MCP:
+Detect local agents and install the released SDS Agent Skill. MCP
+configuration remains untouched by default:
 
 ```bash
 sds install-agents
 ```
 
-The default is user-scoped and detects agents from their commands,
-applications, extensions, or project-use markers. With no match, SDS installs
-only the shared Skill and does not create agent-specific MCP settings. You can
+The default is user-scoped automatic detection, with a shared-Skill fallback.
+Use `--targets opencode,claude` to choose the agents to install or upgrade. You can also
 select all targets, choose a subset, or keep the integration in one repository:
 
 ```bash
@@ -72,8 +71,8 @@ idempotent: agents that support `.agents/skills` share one SDS bundle, while
 agent-specific copies are used only where required. Managed markers record the
 Skill bundle version and content hash, so older bundles update in place without
 creating duplicates. Existing non-SDS skills, MCP servers, and settings are
-preserved. Use `--no-mcp` for skill-only installation or `--dry-run` to preview
-changes. `sds version` reports the CLI, harness, and Skill bundle versions
+preserved. Add `--with-mcp` when MCP is needed or `--dry-run` to preview
+changes; `--no-mcp` remains a compatibility alias for the default. `sds version` reports the CLI, harness, and Skill bundle versions
 separately.
 
 ### 3. Initialization
@@ -89,11 +88,18 @@ Verify your repository structure, code annotations, and check for spec-to-code d
 sds check
 ```
 
+Every AC requires a scenario derivation record, including a durable context
+source, reasoning, ambiguity disposition and positive/counterexample expectations.
+New projects enable this gate explicitly. Older projects missing the policy key receive a migration warning; backfill records before setting `enforce_ac_derivation: true`. Keep
+business outcomes in spec and per-AC mechanisms/tests in design; independently
+review interpretations against context. Durable documents must not reference
+temporary review artifacts. See [workflow](workflow.md) and [templates](reference/templates.md).
+
 ### Optional manual MCP troubleshooting
 
-Automatic MCP configuration is enabled by default. If a client cannot find the
-CLI, re-run `sds install-agents --command /absolute/path/to/sds`; use
-`--no-mcp` if you prefer to manage MCP yourself. A manual stdio entry uses
+Opt in with `sds install-agents --with-mcp --targets TARGET`. If a client cannot
+find the CLI, add `--command /absolute/path/to/sds`. OpenCode defaults to the v1
+layout; v2 clients require `--opencode-config-version v2`. A manual stdio entry uses
 `sds` as the command and `["mcp"]` as its arguments.
 
 ## 🗺️ Ecosystem Roadmap
@@ -119,3 +125,5 @@ Spec-Defined Software (SDS) is proud of its roots and is heavily inspired by and
 > The released `sds-core` skill integrates with the supported Agent Skills and
 > MCP environments listed above. Lifecycle skills marked in progress or planned
 > are not installed until they ship.
+
+See the [validation roadmap](roadmap.md) for planned behavior evaluation, rule consistency checks and negative fixtures.

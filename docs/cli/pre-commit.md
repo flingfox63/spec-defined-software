@@ -1,43 +1,42 @@
-# Git Pre-commit Hook Integration
+# Git Pre-commit Integration
 
-By setting up a Git pre-commit hook, developers can automatically verify code-to-spec consistency locally before any commit is finalized. This prevents non-compliant or drifting changesets from ever reaching the server.
+Run the installed `sds check` command in your existing commit workflow to apply
+the same baseline and project verification gates used for requirement delivery.
+The Git process must be able to find the installed SDS executable.
 
----
+## Existing hook or commit workflow
 
-## 1. Setting up pre-commit
+Preserve the repository's existing hook and integrate this command with its
+failure handling:
 
-If you haven't already, install the `pre-commit` framework in your local machine:
-```bash
-pip install pre-commit
-# Or on Mac
-brew install pre-commit
+```sh
+sds check || exit 1
 ```
 
-Initialize pre-commit in your repository:
-```bash
-pre-commit install
-```
+SDS currently does not publish a `.pre-commit-hooks.yaml` manifest in this
+repository. Do not configure a remote `sds-check` hook ID against this repository.
+Use the installed CLI in your existing workflow instead.
 
----
+## Legacy hook installer
 
-## 2. Configuration
+`sds install-hook` currently writes a hook that invokes a project-local
+`python sds_self_check.py`, and overwrites the existing hook file. It is intended
+for legacy projects containing that checker. New projects initialized by
+`sds init` do not receive a local checker; use the CLI integration above.
 
-Add the following block to your project's `.pre-commit-config.yaml` file to integrate SDS checks:
+## What is checked
 
-```yaml
-repos:
-  - repo: https://github.com/flingfox63/spec-defined-software
-    rev: v1.0.0  # Put the latest release tag or commit hash here
-    hooks:
-      - id: sds-check
-        stages: [commit]
-```
+The checker inspects the workspace, not only staged files. It flags guarded
+implementation changes without a spec change in the change set; it does not
+require code changes for every documentation edit or prove the correct spec was
+changed.
 
----
+It also validates trace identifiers, requires derivation records for every AC
+by default, rejects durable dependencies on temporary review artifacts, and runs
+configured project verification after baseline checks pass. Existing projects
+must backfill derivation records as described in the
+[upgrade guidance](installation.md#sds-check).
 
-## 3. How it Works
-When a developer runs `git commit`:
-1. Pre-commit automatically creates a sandbox Python environment.
-2. It fetches and caches the `sds-cli` package.
-3. It executes `sds check` focusing on the staged files.
-4. If a spec file was changed but no corresponding implementation file was modified (or vice versa), the commit is blocked, showing a diagnostic explanation of the drift.
+A passing hook does not prove semantic correctness or prevent bypassing local
+hooks. Independently review every AC against its source scenario and apply the
+repository's normal CI and release rules.

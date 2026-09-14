@@ -12,6 +12,7 @@ enforce_drift_guard: true
 enforce_side_effects: true
 enforce_traceability: true
 enforce_artifact_placement: true
+enforce_ac_derivation: true
 enforce_module_boundaries: true
 
 verification_commands:

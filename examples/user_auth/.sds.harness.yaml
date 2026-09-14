@@ -19,3 +19,6 @@ authoritative_context_files:
   - "business-flow.md"
   - "domain-model.md"
   - "change-history.md"
+
+# Scenario records are complete; explicitly enable the upgraded gate.
+enforce_ac_derivation: true

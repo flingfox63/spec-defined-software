@@ -2,6 +2,32 @@
 capability_id: user_auth.login
 status: implemented
 version: 1.1.0
+ac_derivation:
+  AC-1:
+    scenario: ../_context/user-journey.md#core-user-journey
+    reasoning: An unknown account cannot establish its identity.
+    ambiguity: Credentials establish identity while account status separately controls eligibility.
+    validation: Unknown usernames return user-not-found; existing usernames proceed to password verification.
+  AC-2:
+    scenario: ../_context/user-journey.md#core-user-journey
+    reasoning: An account name alone does not establish ownership.
+    ambiguity: Credentials establish identity while account status separately controls eligibility.
+    validation: A wrong password is denied and no authenticated session is issued.
+  AC-3:
+    scenario: ../_context/user-journey.md#core-user-journey
+    reasoning: An eligible user with valid credentials needs proof of successful authentication.
+    ambiguity: Credentials establish identity while account status separately controls eligibility.
+    validation: Active valid accounts receive authentication proof identifying that user; invalid credentials do not.
+  AC-4:
+    scenario: ../_context/user-journey.md#core-user-journey
+    reasoning: Successful access must be accountable to security auditing.
+    ambiguity: Credentials establish identity while account status separately controls eligibility.
+    validation: Successful login requests an audit entry; denied login does not report success.
+  AC-5:
+    scenario: ../_context/user-journey.md#core-user-journey
+    reasoning: Suspension removes access eligibility even when account credentials are correct.
+    ambiguity: Credentials establish identity while account status separately controls eligibility.
+    validation: Suspended valid accounts receive no authentication proof and no successful-login audit entry.
 ---
 
 # Capability: User Authentication Login

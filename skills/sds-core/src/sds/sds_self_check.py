@@ -25,6 +25,8 @@ import sys
 import re
 import json
 import shutil
+import html
+from urllib.parse import unquote, urlsplit
 import subprocess
 from fnmatch import fnmatch
 from pathlib import Path
@@ -110,6 +112,7 @@ enforce_drift_guard: true       # Ensure code/UI changes have corresponding spec
 enforce_side_effects: true      # Statically check database or external API operations against spec metadata
 enforce_traceability: true      # Ensure code features trace back to specs with @sds-trace annotations
 enforce_artifact_placement: true # Keep process artifacts in the gitignored review workspace
+enforce_ac_derivation: true # Require scenario reasoning for every AC
 enforce_module_boundaries: true # Require module _context and path-aligned capability IDs
 
 # Optional project-quality gate. Each command is an argv array and runs without a shell.
@@ -134,23 +137,33 @@ authoritative_context_files:
   - "readme.zh.md"
 """
 
+# @sds-trace: specification.validate_contracts:AC-3
 DEFAULT_SPEC_TEMPLATE = """---
 capability_id: <module_name>.<capability_name>
 status: defined  # options: defined, implemented, deprecated
 version: 1.0.0
-side_effects:
-  database:
-    - table: "<table_name>"
-      operations: ["select", "insert"]
-  external_apis: []
-  file_system: []
-  browser_storage: []
+ac_derivation:
+  AC-1:
+    scenario: ../_context/user-journey.md
+    reasoning: "<Explain why this outcome follows from the actor, initial state and goal>"
+    ambiguity: "<Record the chosen interpretation and rejected alternative, or none>"
+    validation: "<State a positive outcome and a boundary or counterexample outcome>"
+  AC-2:
+    scenario: ../_context/user-journey.md
+    reasoning: "<Explain why this outcome follows from the actor, initial state and goal>"
+    ambiguity: "<Record the chosen interpretation and rejected alternative, or none>"
+    validation: "<State a positive outcome and a boundary or counterexample outcome>"
+  AC-3:
+    scenario: ../_context/user-journey.md
+    reasoning: "<Explain why this outcome follows from the actor, initial state and goal>"
+    ambiguity: "<Record the chosen interpretation and rejected alternative, or none>"
+    validation: "<State a positive outcome and a boundary or counterexample outcome>"
 ---
 
 # Capability Specification: <Capability Name>
 
 ## 1. Purpose
-A concise statement of the business goal. Explain what problem this capability solves for the user, and why it is necessary.
+Identify the actor, initial business state, goal and observable outcome from accepted `_context/`. A concise statement of the business goal. Explain what problem this capability solves for the user, and why it is necessary.
 
 ## 2. Acceptance Criteria
 Provide a list of verifiable conditions. Keep them clear, atomic, and testable using plain business/domain terms:
@@ -160,7 +173,7 @@ Provide a list of verifiable conditions. Keep them clear, atomic, and testable u
 - **AC-3**: Given [Precondition] / When [Action] / Then [Expected business outcome]
 
 ## 3. Interface / Contract
-Define the machine-readable input and output schemas conceptually.
+Define the conceptual information exchange required for this capability. Do not include physical API routes, JSON payloads, or specific database/code schemas.
 
 ### A. Business Inputs (Information required to initiate):
 - **User Identifier**: The identity of the authenticated user performing the action.
@@ -179,6 +192,19 @@ Detailed business constraints, validation rules, and specific edge case behavior
 
 ## 5. Operational Contract (When Applicable)
 Define business-level lifecycle operational goals (e.g., retention, compliance, auditing rules). Keep technical choices (e.g. database schema migrations, deployment scripts, cron setups) in `design.md`.
+
+## Authoring check
+For every AC, complete `ac_derivation` above using business language and an
+existing durable context path (optionally a heading anchor). Compare plausible
+interpretations against the scenario. If the context cannot choose between
+materially different outcomes, ask the user and block the dependent work.
+Do not fill accepted reasoning from the current code or leave placeholder text.
+
+Example business AC: Given an unpaid order / When the buyer cancels / Then the
+order is cancelled and no payment is collected. Locking, transaction boundaries,
+endpoint names, JSON keys and table columns belong in `design.md`. User-visible
+compatibility or performance promises remain business requirements when needed.
+Never reference temporary review artifacts; promote accepted conclusions here.
 """
 
 DEFAULT_DESIGN_TEMPLATE = """---
@@ -252,9 +278,22 @@ Detailed classes, functions, controllers, or endpoint routing patterns. Include 
 - **Truth & Writers**: Authoritative runtime store and single-writer boundaries.
 - **Derived Outputs**: Materialization order, rebuildable projections/exports, and compatibility consumers.
 - **Completion**: Scheduler ownership, missed-run detection, idempotent retry, backfill, and reconciliation.
+
+## 10. AC Implementation & Verification Mapping
+Use one row for EVERY AC. Derive positive and counterexample expectations from
+context and spec before reading implementation. Do not change business outcomes
+to fit a convenient mechanism; resolve conflicts in accepted context/spec first.
+
+| AC | Technical mechanism | Positive test | Counterexample / boundary test |
+| --- | --- | --- | --- |
+| AC-1 | <Component and algorithm> | <Test and expected business outcome> | <Test disproving the rejected interpretation> |
+
+Example: implement unpaid-order cancellation using an atomic state transition
+that fails if payment has already completed. Test both cancellation before
+payment and a payment/cancellation race against the accepted business outcome.
+Omit inapplicable technical sections with a reason; do not invent APIs or tables.
 """
 
-# System level context template
 DEFAULT_SYSTEM_BLUEPRINT_TEMPLATE = """# System Architectural Blueprint & Module Partitioning
 > [!NOTE]
 > This system-level context is kept light to map the macro relationship, global integration flows, and boundaries between business modules.
@@ -478,6 +517,7 @@ def load_config(root_path):
         "enforce_traceability": True,
         "enforce_artifact_placement": True,
         "enforce_module_boundaries": True,
+        "enforce_ac_derivation": None,
         "verification_commands": [],
         "authoritative_context_files": [
             "system-blueprint.md",
@@ -683,21 +723,88 @@ def initialize_sds_project(root_path):
         
     spec_template_path = default_cap_dir / "spec.md"
     if not spec_template_path.exists():
-        spec_content = DEFAULT_SPEC_TEMPLATE\
-            .replace("<module_name>", "example_module")\
-            .replace("<capability_name>", "example_capability")\
-            .replace("<Capability Name>", "Example Capability")\
-            .replace("<table_name>", "example_table")
+        # @sds-trace: specification.validate_contracts:AC-3
+        # Illustrative contract, not a claim that the user's feature is implemented.
+        spec_content = """---
+capability_id: example_module.example_capability
+status: defined
+version: 1.0.0
+ac_derivation:
+  AC-1:
+    scenario: ../_context/user-journey.md
+    reasoning: A buyer can withdraw an unpaid order before fulfillment begins.
+    ambiguity: Cancellation is allowed only while unpaid; paid orders need a separate refund scenario.
+    validation: An unpaid order becomes cancelled; a paid order stays unchanged.
+  AC-2:
+    scenario: ../_context/user-journey.md
+    reasoning: Repeating cancellation must not create additional obligations for the buyer.
+    ambiguity: Repetition confirms the existing cancellation rather than creating another action.
+    validation: Cancelling an already cancelled order returns the same outcome without new effects.
+  AC-3:
+    scenario: ../_context/user-journey.md
+    reasoning: Buyers control their own orders and cannot cancel another buyer's order.
+    ambiguity: Ownership is required even when the order is unpaid.
+    validation: The owner can cancel; a different buyer is refused and the order stays unchanged.
+---
+
+# Example: Cancel an unpaid order
+
+## Purpose
+Teach scenario-based requirements using an illustrative cancellation capability.
+Replace this example and its context with accepted project requirements before implementation.
+
+## Acceptance criteria
+- **AC-1**: Given the buyer's unpaid order / When the buyer cancels / Then the order is cancelled; paid orders cannot be cancelled through this capability.
+- **AC-2**: Given an already cancelled order / When its buyer repeats cancellation / Then the existing cancellation is confirmed without additional effects.
+- **AC-3**: Given an order belonging to another buyer / When cancellation is requested / Then the request is refused and the order remains unchanged.
+
+## Interface / contract
+Inputs: requesting buyer and selected order. Outputs: cancellation confirmation
+or refusal. Cancellation changes only the eligible order's business state.
+
+## Business rules
+Only the owner can cancel. Paid orders require a separate refund journey.
+This is a defined example; passing structural checks does not prove delivery.
+"""
         with open(spec_template_path, "w", encoding="utf-8") as f:
             f.write(spec_content)
         print_success("Created spec draft: specs/example_module/example_capability/spec.md")
         
     design_template_path = default_cap_dir / "design.md"
     if not design_template_path.exists():
-        design_content = DEFAULT_DESIGN_TEMPLATE\
-            .replace("<module>", "example_module")\
-            .replace("<capability_name>", "example_capability")\
-            .replace("<Capability Name>", "Example Capability")
+        design_content = """---
+sds_kind: authoritative-design
+capability_id: example_module.example_capability
+status: accepted
+version: 1.0.0
+---
+
+# Illustrative cancellation design
+
+## Architectural & Protocol Overview
+A cancellation service receives an authenticated buyer identifier and order
+identifier. A repository loads the order; the service checks ownership before
+returning any outcome and changes unpaid orders to cancelled atomically.
+
+## Business Contract Mapping
+Buyer maps to authenticated buyer_id; selected order maps to order_id.
+Cancellation confirmation or refusal maps to the service result.
+
+## Database Schema & Data Model
+Illustrative order fields: order_id, buyer_id, status. No database is created
+by initialization. A conditional update prevents cancelling a concurrently paid order.
+
+## Verification Mapping
+| AC | Mechanism | Positive check | Boundary check |
+| --- | --- | --- | --- |
+| AC-1 | Conditional unpaid-to-cancelled update | Owner cancels unpaid order | Paid order or concurrent payment prevents cancellation |
+| AC-2 | Return existing cancelled state after ownership check | Repetition confirms cancellation | No repeated state change or external effects |
+| AC-3 | Verify authenticated buyer against stored owner | Owner may proceed | Other buyer is refused without modification |
+
+## Data Transition & Migration Design
+No executable implementation or migration is included. Adapt this illustrative
+design to accepted project context before implementing or marking it delivered.
+"""
         with open(design_template_path, "w", encoding="utf-8") as f:
             f.write(design_content)
         print_success("Created design draft: specs/example_module/example_capability/design.md")
@@ -705,7 +812,12 @@ def initialize_sds_project(root_path):
     journey_path = module_context_dir / "user-journey.md"
     if not journey_path.exists():
         with open(journey_path, "w", encoding="utf-8") as f:
-            f.write(DEFAULT_USER_JOURNEY_TEMPLATE)
+            f.write("# Cancellation example journey\n\n"
+                    "A buyer has placed an unpaid order and changes their mind before fulfillment.\n"
+                    "They can cancel their own unpaid order. Paid orders need a separate refund\n"
+                    "journey. Repeated cancellation confirms the existing outcome without new\n"
+                    "effects. Another buyer cannot cancel or modify this order.\n\n"
+                    "This is a teaching scenario, to be replaced with accepted project context.\n")
         print_success("Created module user-journey: specs/example_module/_context/user-journey.md")
         
     flow_path = module_context_dir / "business-flow.md"
@@ -725,7 +837,7 @@ def initialize_sds_project(root_path):
     print("Under SDS, modules host complete business scenarios, while capabilities provide concrete details.")
     print("Check specs_review/ for ephemeral plan and task templates.")
     print("The root AGENTS.md provides concise routing and repository guardrails.")
-    print("Run `python sds_self_check.py` to run verification checks.")
+    print("Run `sds check` to run verification checks.")
     print("="*50 + "\n")
 
 
@@ -808,6 +920,93 @@ def refresh_project_harness(root_path):
         f"Merge relevant upstream changes from {candidate_path.relative_to(root_path)}."
     )
     return 2
+
+
+def normalized_reference(value):
+    return html.unescape(unquote(value)).replace("\\_", "_").replace("\\", "/")
+
+
+# @sds-trace: specification.validate_contracts:AC-1
+def references_review_artifact(content, durable_path, review_dir, root_path=None):
+    normalized = normalized_reference(content)
+    # Match artifact paths, not prose that merely names the directory.
+    pattern = r"(?<![\w.-])" + re.escape(Path(os.path.relpath(review_dir.resolve(), Path(root_path).resolve())).as_posix() if root_path is not None else review_dir.name) + r"/[^\s`<>\]\[()\"']+"
+    if re.search(pattern, normalized, re.IGNORECASE):
+        return True
+    targets = re.findall(r"\]\(<?([^\s)>]+)", normalized)
+    targets += re.findall(r"^\s*\[[^\]]+\]:\s*<?([^\s>]+)", normalized, re.MULTILINE)
+    targets += re.findall(r"(?:href|src)\s*=\s*[\"']([^\"']+)", normalized, re.IGNORECASE)
+    targets += re.findall(r"<([^<>\s]+)>", normalized)
+    for target in targets:
+        try:
+            parsed = urlsplit(target)
+        except ValueError:
+            continue
+        if parsed.scheme and parsed.scheme != "file":
+            continue
+        try:
+            candidate = (durable_path.parent / parsed.path).resolve()
+            candidate.relative_to(review_dir.resolve())
+            return True
+        except (ValueError, OSError, RuntimeError):
+            pass
+    return False
+
+
+def is_unresolved(value):
+    return (not isinstance(value, str) or not value.strip()
+            or bool(re.search(r"(?i)^\s*(?:(?:todo|tbd|pending|unresolved|placeholder)\b|待确认|待定|未解决)|^\s*<[^>]+>\s*$|^\s*\[[^]]+\]\s*$", value)))
+
+
+# @sds-trace: specification.validate_contracts:AC-2
+def validate_ac_derivation(spec_path, spec_dir, frontmatter, acs):
+    findings = []
+    records = frontmatter.get("ac_derivation", {})
+    if not isinstance(records, dict):
+        records = {}
+    def fail(ac, detail):
+        findings.append({
+            "code": "INVALID_AC_DERIVATION", "severity": "error",
+            "target": str(spec_path),
+            "message": f"{ac}: {detail}",
+            "remediation_hint": "Record scenario, reasoning, ambiguity and validation for every AC; resolve business choices from durable context before implementation.",
+        })
+    if not acs:
+        fail("Acceptance criteria", "No AC identifiers were defined.")
+    for extra in set(records) - acs:
+        fail(extra, "Derivation has no matching acceptance criterion.")
+    for ac in sorted(acs):
+        record = records.get(ac)
+        if not isinstance(record, dict):
+            fail(ac, "Missing scenario derivation record.")
+            continue
+        for field in ("scenario", "reasoning", "ambiguity", "validation"):
+            if is_unresolved(record.get(field)):
+                fail(ac, f"Missing or unresolved {field}.")
+        source = record.get("scenario")
+        if not isinstance(source, str) or is_unresolved(source):
+            continue
+        try:
+            parsed = urlsplit(normalized_reference(source))
+            context = (spec_path.parent / parsed.path).resolve()
+        except (ValueError, OSError, RuntimeError):
+            fail(ac, "Invalid scenario path.")
+            continue
+        try:
+            relative = context.relative_to(spec_dir.resolve())
+        except ValueError:
+            relative = None
+        if (parsed.scheme or parsed.netloc or not relative
+                or "_context" not in relative.parts or context.suffix != ".md"
+                or not context.is_file()):
+            fail(ac, "Scenario must reference an existing durable _context Markdown document.")
+            continue
+        if parsed.fragment:
+            headings = re.findall(r"^#{1,6}\s+(.+)$", context.read_text(encoding="utf-8"), re.MULTILINE)
+            anchors = {re.sub(r"[^\w\- ]", "", h.strip().lower()).replace(" ", "-") for h in headings}
+            if parsed.fragment not in anchors:
+                fail(ac, "Scenario heading anchor does not exist.")
+    return findings
 
 
 # --- Validation Logic ---
@@ -904,16 +1103,12 @@ def validate_sds(root_path):
                 ),
             })
 
-        review_link_pattern = re.compile(
-            rf"\]\([^)]*{re.escape(review_dir.name)}(?:/|\\)[^)]*\)",
-            re.IGNORECASE,
-        )
         for durable_path in spec_dir.rglob("*.md"):
             try:
                 durable_content = durable_path.read_text(encoding="utf-8", errors="ignore")
             except OSError:
                 continue
-            if not review_link_pattern.search(durable_content):
+            if not references_review_artifact(durable_content, durable_path, review_dir, root_path):
                 continue
             rel_durable_path = durable_path.relative_to(root_path)
             errors.append({
@@ -936,6 +1131,12 @@ def validate_sds(root_path):
     # --- 2. Context & Specs Audit ---
     print_info("Step 2: Auditing context layers & capability specs...")
     
+    derivation_policy = config.get("enforce_ac_derivation")
+    if derivation_policy is None:
+        print_warn("AC derivation compatibility mode: policy missing; backfill ac_derivation for every AC, then set enforce_ac_derivation: true. This gate was skipped.")
+    elif derivation_policy is False:
+        print_warn("AC scenario derivation check explicitly disabled; semantic review is still required.")
+
     specs_found = []
     frontmatters = {}
     spec_to_acs = {}
@@ -1041,6 +1242,9 @@ def validate_sds(root_path):
             if cap_id:
                 acs = extract_ac_ids(body)
                 spec_to_acs[cap_id] = acs
+                if config.get("enforce_ac_derivation") is True:
+                    errors.extend(validate_ac_derivation(spec_path, spec_dir, fm, acs))
+
                 
             print_success(f"Spec validated: {rel_spec_path}")
 

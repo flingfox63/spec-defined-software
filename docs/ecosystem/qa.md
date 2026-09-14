@@ -51,7 +51,7 @@ True **Requirements Closure** demands that our automated tests trace back to the
 The `sds-qa` agent operates under a three-phase verification cycle:
 
 ### Phase 1: Test-Case Mapping (Specs & Journeys)
-The agent reads the newly generated feature code, the micro-level specifications `spec.md`, and the macro-level `user-journey.md` blueprints:
+The agent first reads accepted `spec.md`, all AC derivation records and the source `user-journey.md` context, without reading implementation. It challenges each interpretation with a counterexample and derives expected results independently. Only then does it inspect code and map the tests to implementation:
 * **Micro-Verification**: Maps each AC (Acceptance Criteria) to explicit unit assertions.
 * **Macro-Verification**: Chains multiple APIs/views together in sequence, creating BDD (Behavior-Driven Development) integration tests that mimic the user path documented in the `user-journey.md`.
 
@@ -60,3 +60,5 @@ The agent boots an ephemeral, sandboxed test database/environment. It runs both 
 
 ### Phase 3: Release Handshake
 Once 100% of the individual ACs **AND** the overarching User Journeys are verified as passing, `sds-qa` signs off on the release, generating a compliance certificate that unlocks the deployment phase (`sds-ops`).
+
+The shipped `sds check` validates derivation record structure and trace identifiers; it does not automate this planned semantic QA process or certify business correctness.

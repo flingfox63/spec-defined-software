@@ -4,11 +4,13 @@ sds_kind: authoritative-context
 
 # Agent Integration User Journey
 
-A developer installs or upgrades SDS once, then expects locally used coding
-agents to discover the same released SDS Skill and invoke the same SDS MCP
-server without naming every host. Shared discovery locations are preferred so
-upgrades do not create independent copies that can drift. Explicit target and
-all-target modes remain available when automatic detection is insufficient.
+A developer installs or upgrades SDS and expects locally used agents to be
+selected by default through conservative detection. Explicit target lists let
+the developer choose which agents to install or upgrade; all-target mode remains
+available. With no evidence, only the shared Skill is installed. MCP changes
+require an explicit request, including repairs to earlier SDS configurations.
+Normal installation neither probes nor repairs MCP files. Shared discovery
+avoids redundant copies; compatible agents can discover the same bundle.
 
 Agent-specific locations remain necessary when a client does not discover the
 cross-agent directory at the selected scope. Existing user-owned skills and
@@ -20,3 +22,10 @@ When an SDS upgrade changes the executable location, an existing connection
 that still matches the canonical SDS invocation advances to the new command.
 Customized or ambiguous connections remain user-owned and are preserved for
 manual review.
+
+When opting into MCP, an OpenCode developer expects the client to remain
+launchable. First-generation clients need a different connection layout from
+second-generation clients. SDS defaults to the first generation and supports
+an explicit second-generation choice. Only recognizable SDS-only legacy
+entries can move automatically; mixed or customized layouts require manual
+resolution and must not be partially rewritten.

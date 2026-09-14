@@ -190,6 +190,7 @@ The bundled `sds_self_check.py` is a standard-library baseline validator. It can
 - reject unclassified `_context/` files and durable links to `specs_review/`;
 - detect coarse change-set drift between implementation and specs;
 - validate referenced capability/AC identifiers;
+- require complete per-AC derivation records and existing durable context sources by default;
 - heuristically scan selected source types for undeclared domains/tables;
 - execute configured verification commands;
 - write structured diagnostics.
@@ -205,12 +206,13 @@ It cannot, without project-specific extensions:
 
 Treat those as explicit project test/release responsibilities. Do not describe an unconfigured capability as if the baseline harness performs it.
 
-The project-local checker is the repository entrypoint. The skill-owned checker is an upstream reference. Use `--refresh-harness` for managed copies; customized project checkers receive a candidate under `specs_review/` and require manual merging.
+Use the packaged `sds check` entrypoint for current projects. Legacy projects with a local checker can use `sds refresh-harness` to update managed copies; customized checkers receive a candidate in the temporary review workspace for manual merging.
 
 ## 8. Completion checklist
 
 - [ ] Accepted behavior is represented in `spec.md`.
-- [ ] Accepted implementation decisions are represented in `design.md`.
+- [ ] Accepted implementation decisions and per-AC positive/boundary test mappings are represented in `design.md`.
+- [ ] Every AC has complete scenario derivation and a separate context-based counterexample review.
 - [ ] Shared scenarios/boundaries are current without process notes.
 - [ ] The capability is in the owning module, its ID matches the path, and that module has `_context/`.
 - [ ] Stateful workflows are reachable from empty/initial state without circular prerequisites.
@@ -223,3 +225,24 @@ The project-local checker is the repository entrypoint. The skill-owned checker 
 - [ ] Release evidence identifies the exact running build without inventing undocumented credential gates.
 - [ ] Working tree has been reviewed for stale, generated, untracked, or unrelated files.
 - [ ] Commit/push/deploy actions have the required user authorization.
+
+## Scenario derivation before implementation
+
+Every AC requires a spec frontmatter `ac_derivation` record: `scenario` is an
+existing relative durable `_context/` Markdown path; `reasoning` explains the
+business inference; `ambiguity` records the accepted interpretation and rejected
+alternative (or `none` after review); `validation` states positive and negative
+business expectations. The enabled checker rejects missing records, records without matching ACs, placeholders,
+explicit unresolved markers and invalid context sources across all ACs, regardless of status.
+
+The gate verifies structure, not semantic truth. Perform a separate spec-only
+counterexample review for every AC, then map each AC to technical mechanisms and
+positive/boundary tests in design. A context change requires revisiting dependent
+ACs. Do not derive acceptance from implementation. Resolve material ambiguity
+with the user before dependent work. Existing projects missing the policy key receive one migration warning and backfill records before explicitly enabling the gate;
+`enforce_ac_derivation: false` is an explicit temporary migration escape hatch,
+not successful scenario verification.
+
+Specs describe business actors, states and outcomes. Design describes protocols,
+physical fields, algorithms and verification. Never link durable documents to
+review artifacts using any notation; move accepted conclusions into durable state.

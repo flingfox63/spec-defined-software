@@ -50,3 +50,12 @@ interface LoginFailureResponse {
   `https://auth-audit.example.com`
 - **Resilience Policy**: If the outbound audit call fails, log a local warning but still allow the login process to complete successfully (no cascading failures).
 - **Suspension boundary**: Do not invoke the successful-login audit endpoint when account eligibility denies the login.
+
+## 5. AC Implementation & Verification Mapping
+| AC | Mechanism | Positive / boundary verification |
+| --- | --- | --- |
+| AC-1 | User lookup | Unknown user denied; known user proceeds to credential check |
+| AC-2 | Password verification | Wrong password denied; correct password proceeds to eligibility check |
+| AC-3 | Signed token generation | Eligible account receives identifying token; invalid credentials receive none |
+| AC-4 | Outbound audit | Success triggers audit; denied login emits no success event |
+| AC-5 | Account status guard before issuance | Suspended valid account receives neither token nor successful audit |

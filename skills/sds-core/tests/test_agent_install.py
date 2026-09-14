@@ -17,6 +17,8 @@ from sds.agent_install import (
     TARGETS,
     install_agent_integrations,
     resolve_targets,
+    build_parser,
+    main as install_main,
 )
 from sds.cli import version_report
 from sds.sds_self_check import HARNESS_VERSION
@@ -82,6 +84,7 @@ class AgentInstallTests(unittest.TestCase):
         configure_mcp=False,
         force=False,
         dry_run=False,
+        opencode_config_version="v1",
     ):
         return install_agent_integrations(
             home=home,
@@ -93,7 +96,123 @@ class AgentInstallTests(unittest.TestCase):
             force=force,
             dry_run=dry_run,
             skill_source=skill_source,
+            opencode_config_version=opencode_config_version,
         )
+
+    def test_default_detection_and_explicit_subset(self):
+        # @sds-trace: agent_integration.install_agents:AC-5
+        self.assertEqual(build_parser().parse_args([]).targets, "detected")
+        for value in (None, "", [], "  "):
+            self.assertEqual(resolve_targets(value, detected_targets=[]), [TARGETS["shared"]])
+        for targets, expected in ((None, ("claude", "cline")), ("opencode", ("opencode",))):
+            with tempfile.TemporaryDirectory(prefix="sds-default-target-") as raw:
+                home, project, source = self.make_layout(raw)
+                from sds.agent_install import AgentDetection
+                detections = [AgentDetection(TARGETS[name], ("test evidence",)) for name in ("claude", "cline")]
+                with mock.patch("sds.agent_install.detect_agent_targets", return_value=detections) as detect:
+                    kwargs = {} if targets is None else {"targets": targets}
+                    result = install_agent_integrations(home=home, project_dir=project, skill_source=source, **kwargs)
+                self.assertTrue(result.ok)
+                self.assertEqual(result.selected_targets, expected)
+                self.assertEqual(detect.call_count, 1 if targets is None else 0)
+                self.assertEqual((home / ".claude/skills/sds/SKILL.md").exists(), targets is None)
+                self.assertEqual((home / ".cline/skills/sds/SKILL.md").exists(), targets is None)
+                self.assertFalse(any(event.kind == "mcp" for event in result.events))
+        with mock.patch("sds.agent_install.install_agent_integrations") as install_call:
+            with mock.patch("sds.agent_install._print_summary"), mock.patch("builtins.print"):
+                install_main([])
+            self.assertEqual(install_call.call_args.kwargs["targets"], "detected")
+
+    def test_mcp_is_opt_in_for_api_and_cli(self):
+        # @sds-trace: agent_integration.install_agents:AC-8
+        with tempfile.TemporaryDirectory(prefix="sds-opt-in-") as raw:
+            home, project, source = self.make_layout(raw)
+            existing = project / "opencode.json"
+            original = '{"mcp": {"servers": {"sds": null}}}'
+            existing.write_text(original)
+            result = install_agent_integrations(
+                home=home, project_dir=project, skill_source=source,
+                scope="project", targets="all",
+            )
+            self.assertTrue(result.ok)
+            self.assertFalse(any(e.kind == "mcp" for e in result.events))
+            self.assertEqual(existing.read_text(), original)
+            self.assertFalse((project / ".mcp.json").exists())
+        parser = build_parser()
+        self.assertFalse(parser.parse_args([]).configure_mcp)
+        self.assertFalse(parser.parse_args(["--no-mcp"]).configure_mcp)
+        self.assertTrue(parser.parse_args(["--with-mcp"]).configure_mcp)
+        for argv, expected in (([], False), (["--with-mcp"], True), (["--no-mcp"], False)):
+            with mock.patch("sds.agent_install.install_agent_integrations") as install_call:
+                with mock.patch("sds.agent_install._print_summary"), mock.patch("builtins.print"):
+                    install_main(argv)
+                self.assertIs(install_call.call_args.kwargs["configure_mcp"], expected)
+
+    def test_opencode_generations_and_migration_are_idempotent(self):
+        # @sds-trace: agent_integration.install_agents:AC-9
+        entry = {"type": "local", "command": ["sds", "mcp"]}
+        for generation in ("v1", "v2"):
+            with self.subTest(generation=generation), tempfile.TemporaryDirectory() as raw:
+                home, project, source = self.make_layout(raw)
+                path = project / "opencode.json"
+                legacy_mcp = {"servers": {"sds": entry}} if generation == "v1" else {"sds": entry}
+                original = json.dumps({"mcp": legacy_mcp, "model": "user-choice"})
+                path.write_text(original)
+                options = dict(scope="project", targets="opencode", configure_mcp=True,
+                               opencode_config_version=generation)
+                preview = self.install(home, project, source, dry_run=True, **options)
+                self.assertTrue(preview.ok)
+                self.assertEqual(path.read_text(), original)
+                result = self.install(home, project, source, **options)
+                self.assertTrue(result.ok)
+                expected = {"sds": entry} if generation == "v1" else {"servers": {"sds": entry}}
+                self.assertEqual(json.loads(path.read_text()), {"mcp": expected, "model": "user-choice"})
+                again = self.install(home, project, source, **options)
+                self.assertTrue(again.ok)
+                self.assertEqual(again.changed, 0)
+
+    def test_opencode_ambiguous_legacy_layout_is_preserved_even_with_force(self):
+        # @sds-trace: agent_integration.install_agents:AC-9
+        entry = {"type": "local", "command": ["sds", "mcp"]}
+        custom = dict(entry, environment={"PROFILE": "user"})
+        cases = [
+            ("v1", {"servers": {"sds": custom}}),
+            ("v1", {"servers": {"sds": None}}),
+            ("v1", {"servers": {"sds": entry, "other": entry}}),
+            ("v1", {"sds": entry, "servers": {"sds": entry}}),
+            ("v1", {"servers": {"sds": entry}, "timeout": {"startup": 45000}}),
+            ("v2", {"timeout": entry}),
+            ("v2", {"sds": custom}),
+            ("v2", {"other": entry}),
+            ("v2", {"servers": {"sds": entry}, "sds": entry}),
+        ]
+        for generation, mcp in cases:
+            with self.subTest(generation=generation, mcp=mcp), tempfile.TemporaryDirectory() as raw:
+                home, project, source = self.make_layout(raw)
+                path = project / "opencode.json"
+                original = json.dumps({"mcp": mcp})
+                path.write_text(original)
+                result = self.install(home, project, source, scope="project",
+                                      targets="opencode", configure_mcp=True, force=True,
+                                      opencode_config_version=generation)
+                self.assertFalse(result.ok)
+                self.assertEqual(path.read_text(), original)
+
+    def test_opencode_v1_preserves_other_servers_and_settings(self):
+        # @sds-trace: agent_integration.install_agents:AC-9
+        with tempfile.TemporaryDirectory() as raw:
+            home, project, source = self.make_layout(raw)
+            path = project / "opencode.json"
+            other = {"type": "remote", "url": "https://example.test/mcp", "enabled": False}
+            path.write_text(json.dumps({"mcp": {"other": other, "servers": other}, "theme": "system"}))
+            result = self.install(home, project, source, scope="project",
+                                  targets="opencode", configure_mcp=True)
+            self.assertTrue(result.ok)
+            configured = json.loads(path.read_text())
+            self.assertEqual(configured["mcp"]["other"], other)
+            self.assertEqual(configured["mcp"]["servers"], other)
+            self.assertEqual(configured["mcp"]["sds"], {"type": "local", "command": ["sds", "mcp"]})
+            self.assertEqual(configured["theme"], "system")
 
     def test_common_targets_are_registered_and_agy_alias_is_deduplicated(self):
         self.assertEqual(set(TARGETS), self.EXPECTED_TARGETS)
@@ -586,7 +705,7 @@ class AgentInstallTests(unittest.TestCase):
             configured = json.loads(config_path.read_text(encoding="utf-8"))
             self.assertFalse(result.errors)
             self.assertEqual(
-                configured["mcp"]["servers"]["sds"],
+                configured["mcp"]["sds"],
                 {"type": "local", "command": ["C:\\new\\sds.exe", "mcp"]},
             )
 
@@ -742,6 +861,7 @@ class AgentInstallTests(unittest.TestCase):
                     {
                         "theme": "system",
                         "mcp": {
+                            "timeout": {"startup": 45000},
                             "servers": {
                                 "existing": {
                                     "type": "remote",
@@ -761,10 +881,12 @@ class AgentInstallTests(unittest.TestCase):
                 targets=("opencode",),
                 command="custom-sds",
                 configure_mcp=True,
+                opencode_config_version="v2",
             )
 
             merged = json.loads(config_path.read_text(encoding="utf-8"))
             self.assertFalse(result.errors)
+            self.assertEqual(merged["mcp"]["timeout"], {"startup": 45000})
             self.assertEqual(merged["theme"], "system")
             self.assertEqual(
                 merged["mcp"]["servers"]["existing"],

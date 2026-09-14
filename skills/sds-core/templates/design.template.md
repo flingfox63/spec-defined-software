@@ -2,7 +2,7 @@
 sds_kind: authoritative-design
 capability_id: <module>.<capability_name>
 status: accepted
-version: 2.0.0
+version: 1.0.0
 ---
 
 # Technical Design Specification: <Capability Name>
@@ -69,3 +69,17 @@ Detailed classes, functions, controllers, or endpoint routing patterns. Include 
 - **Truth & Writers**: Authoritative runtime store and single-writer boundaries.
 - **Derived Outputs**: Materialization order, rebuildable projections/exports, and compatibility consumers.
 - **Completion**: Scheduler ownership, missed-run detection, idempotent retry, backfill, and reconciliation.
+
+## 10. AC Implementation & Verification Mapping
+Use one row for EVERY AC. Derive positive and counterexample expectations from
+context and spec before reading implementation. Do not change business outcomes
+to fit a convenient mechanism; resolve conflicts in accepted context/spec first.
+
+| AC | Technical mechanism | Positive test | Counterexample / boundary test |
+| --- | --- | --- | --- |
+| AC-1 | <Component and algorithm> | <Test and expected business outcome> | <Test disproving the rejected interpretation> |
+
+Example: implement unpaid-order cancellation using an atomic state transition
+that fails if payment has already completed. Test both cancellation before
+payment and a payment/cancellation race against the accepted business outcome.
+Omit inapplicable technical sections with a reason; do not invent APIs or tables.
