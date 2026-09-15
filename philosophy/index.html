@@ -1,0 +1,1451 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The central operating system for AI-collaborative software delivery.">
+      
+      
+      
+        <link rel="canonical" href="https://sds.lin63.com/philosophy/">
+      
+      
+        <link rel="prev" href="../roadmap/">
+      
+      
+        <link rel="next" href="../workflow/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../zh/philosophy/" hreflang="zh">
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Core Philosophy - Spec-Defined Software (SDS)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#core-philosophy-system-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Spec-Defined Software (SDS)" class="md-header__button md-logo" aria-label="Spec-Defined Software (SDS)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Spec-Defined Software (SDS)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Core Philosophy
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              🇺🇸 English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../zh/philosophy/" hreflang="zh" class="md-select__link">
+              🇨🇳 中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../roadmap/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Validation Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Core Philosophy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../workflow/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  The SDL Workflow
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  CLI & Integration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../ecosystem/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Ecosystem Skills
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/templates/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Spec-Defined Software (SDS)" class="md-nav__button md-logo" aria-label="Spec-Defined Software (SDS)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Spec-Defined Software (SDS)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Philosophy
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-pillars-of-spec-defined-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌟 The Three Pillars of Spec-Defined Engineering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌟 The Three Pillars of Spec-Defined Engineering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-defining-the-why-the-goal-is-sovereign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Defining the "WHY" (The Goal is Sovereign)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-conceptual-decoupling-decoupling-what-from-how" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Conceptual Decoupling (Decoupling "What" from "How")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-the-unbreakable-quality-loop-zero-drift-traceability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Unbreakable Quality Loop (Zero-Drift &amp; Traceability)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sds-modeling-organizational-mechanics-the-dots-lines-and-planes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📐 SDS Modeling &amp; Organizational Mechanics: The "Dots, Lines, and Planes"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📐 SDS Modeling &amp; Organizational Mechanics: The &#34;Dots, Lines, and Planes&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-module-vs-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Module vs. Capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hub-and-spoke-team-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Hub-and-Spoke: Team Isolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-separation-of-review-and-durable-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Separation of Review and Durable Workspace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#heritage-inspiration-the-future-of-software-delivery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💖 Heritage &amp; Inspiration: The Future of Software Delivery
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The SDL Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI & Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI & Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pre-commit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pre-commit Hook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../ecosystem/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem Skills
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ecosystem Skills
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/ideator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sds-ideator (Ideation)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/architect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sds-architect (Design)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/coder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sds-coder (Implementation)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/qa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sds-qa (Quality Assurance)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sds-ops (Deployment)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/templates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/playbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-pillars-of-spec-defined-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌟 The Three Pillars of Spec-Defined Engineering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌟 The Three Pillars of Spec-Defined Engineering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-defining-the-why-the-goal-is-sovereign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Defining the "WHY" (The Goal is Sovereign)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-conceptual-decoupling-decoupling-what-from-how" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Conceptual Decoupling (Decoupling "What" from "How")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-the-unbreakable-quality-loop-zero-drift-traceability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Unbreakable Quality Loop (Zero-Drift &amp; Traceability)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sds-modeling-organizational-mechanics-the-dots-lines-and-planes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📐 SDS Modeling &amp; Organizational Mechanics: The "Dots, Lines, and Planes"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📐 SDS Modeling &amp; Organizational Mechanics: The &#34;Dots, Lines, and Planes&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-module-vs-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Module vs. Capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-hub-and-spoke-team-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Hub-and-Spoke: Team Isolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-separation-of-review-and-durable-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Separation of Review and Durable Workspace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#heritage-inspiration-the-future-of-software-delivery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💖 Heritage &amp; Inspiration: The Future of Software Delivery
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="core-philosophy-system-architecture">Core Philosophy &amp; System Architecture<a class="headerlink" href="#core-philosophy-system-architecture" title="Permanent link">&para;</a></h1>
+<p>At its heart, <strong>Spec-Defined Software (SDS)</strong> is not merely a tool for linting markdown files or verifying tests; it is the ultimate realization of software engineering where <strong>the specification is the software</strong>. </p>
+<p>SDS is designed to organize the entire software ecosystem as the <strong>future form of requirements delivery</strong>. By constructing a structured, multi-dimensional specification system based on the user's perspective, we establish a cohesive fabric of <strong>"dots, lines, and planes" (有点有线有面)</strong>. This common cognitive map allows both humans and AI agents to continuously, seamlessly, and adaptively co-evolve the system over time.</p>
+<hr />
+<h2 id="the-three-pillars-of-spec-defined-engineering">🌟 The Three Pillars of Spec-Defined Engineering<a class="headerlink" href="#the-three-pillars-of-spec-defined-engineering" title="Permanent link">&para;</a></h2>
+<p>The ultimate goal of SDS is to move beyond text-based documentation and establish a living, spec-defined architecture. This is governed by three core pillars:</p>
+<h3 id="1-defining-the-why-the-goal-is-sovereign">1. Defining the "WHY" (The Goal is Sovereign)<a class="headerlink" href="#1-defining-the-why-the-goal-is-sovereign" title="Permanent link">&para;</a></h3>
+<p>A common pitfall in software engineering is letting physical implementation choices or feature wish-lists dictate software boundaries. Simply asking users what features they want leads to bloated, fragmented software. As Steve Jobs famously remarked, <em>"People don't know what they want until you show it to them."</em></p>
+<p>SDS addresses this directly:
+* <strong>The specification (<code>spec.md</code>) is designed to capture the "WHY" from the user's perspective.</strong> Instead of specifying exact physical screens, button colors, or camelCase API schemas, SDS focuses on the underlying business motivations, the core user goals, and the conceptual boundaries.
+* Rather than writing down "what physical software features to build," we lock down the <strong>Purpose</strong> (Why does this capability exist from the user's perspective?) and <strong>Acceptance Criteria</strong> (How do we conceptually verify that the user's motivation has been satisfied?).
+* By specifying the "WHY" conceptually, we give implementation agents the maximum technical freedom to synthesize the optimal "HOW" while maintaining a 100% pure business contract.</p>
+<h3 id="2-conceptual-decoupling-decoupling-what-from-how">2. Conceptual Decoupling (Decoupling "What" from "How")<a class="headerlink" href="#2-conceptual-decoupling-decoupling-what-from-how" title="Permanent link">&para;</a></h3>
+<p>To prevent physical details from corrupting business specifications, SDS enforces a strict boundary between conceptual modeling and technical implementation:
+* <strong>The Spec (<code>spec.md</code>)</strong> defines the conceptual boundaries: <em>What</em> is the purpose? <em>What</em> is the business information exchanged conceptually (inputs and outputs described in domain terms)?
+* <strong>The Design (<code>design.md</code>)</strong> defines the physical implementation: <em>How</em> is it realized physically? It maps the spec's conceptual inputs/outputs directly to JSON keys, TypeScript interfaces, database schemas, and migration SQL scripts.
+* This decoupling allows business rules to remain stable and pure, even as physical technologies, frameworks, or database choices evolve.</p>
+<h3 id="3-the-unbreakable-quality-loop-zero-drift-traceability">3. The Unbreakable Quality Loop (Zero-Drift &amp; Traceability)<a class="headerlink" href="#3-the-unbreakable-quality-loop-zero-drift-traceability" title="Permanent link">&para;</a></h3>
+<p>In SDS, a specification is a <strong>living, executable contract</strong>. 
+* <strong>Zero-Drift</strong>: Any modification to a spec's business criteria must trigger corresponding changes in physical code and tests, and vice versa. 
+* <strong>Bidirectional Traceability</strong>: Every Gherkin-style Acceptance Criterion (<code>AC-n</code>) is physically linked to implementation lines and unit tests using the <code>@sds-trace</code> anchor.
+* The <code>sds check</code> engine provides structural guards: coarse change-set drift detection, valid trace identifiers, per-AC derivation records and configured project checks. It does not prove semantic alignment or independently establish both implementation and test coverage.
+* Every AC records its durable scenario source, reasoning, ambiguity disposition and positive/counterexample expectations. A separate scenario review challenges each interpretation; design maps each AC to technical mechanisms and tests.</p>
+<hr />
+<h2 id="sds-modeling-organizational-mechanics-the-dots-lines-and-planes">📐 SDS Modeling &amp; Organizational Mechanics: The "Dots, Lines, and Planes"<a class="headerlink" href="#sds-modeling-organizational-mechanics-the-dots-lines-and-planes" title="Permanent link">&para;</a></h2>
+<p>To operationalize SDS as a living human-AI ecosystem, we organize the repository using a cohesive, layered hierarchy that mirrors business domains rather than folder structures:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌────────────────────────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│  SYSTEM BLUEPRINT &amp; GLOSSARY (The Plane / 面)          │ &lt;--- High-level business universe
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>└───────────────────────────┬────────────────────────────┘
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                            ▼
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>┌────────────────────────────────────────────────────────┐
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│  MODULE CONTEXT &amp; JOURNEYS (The Line / 线)             │ &lt;--- End-to-end business lifecycles
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>└───────────────────────────┬────────────────────────────┘
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>                            ▼
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>┌────────────────────────────────────────────────────────┐
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  CAPABILITY SPEC &amp; DESIGN (The Dot / 点)               │ &lt;--- Atomic transactions &amp; realization
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>└────────────────────────────────────────────────────────┘
+</span></code></pre></div>
+<h3 id="1-module-vs-capability">1. Module vs. Capability<a class="headerlink" href="#1-module-vs-capability" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>The Plane (面 - System Context)</strong>: Global glossaries and the <code>system-blueprint.md</code> define the entire boundaries of the business universe.</li>
+<li><strong>The Line (线 - Module Context)</strong>: High-level business subdomains (e.g., <code>user_auth</code>, <code>billing</code>) organize cohesive user journeys, business flows, and domain models that span multiple transactional boundaries.</li>
+<li><strong>The Dot (点 - Capability Spec &amp; Design)</strong>: Atomic, transactional scenarios (e.g., <code>login</code>, <code>refund</code>) that represent specific business actions.</li>
+</ul>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>A Capability is NOT a physical API interface/endpoint.</strong> 
+A Capability represents business-value scenarios from the user/product perspective (defined in <code>spec.md</code>). A single Capability can be physically realized by multiple API endpoints or polymorphic parameter routes, which are mapped solely in <code>design.md</code>. Matching APIs 1-to-1 to Capabilities is an anti-pattern leading to spec fragmentation.</p>
+</blockquote>
+<h3 id="2-hub-and-spoke-team-isolation">2. Hub-and-Spoke: Team Isolation<a class="headerlink" href="#2-hub-and-spoke-team-isolation" title="Permanent link">&para;</a></h3>
+<p>When multiple teams and projects inside an organization adopt SDS, copying raw validator scripts to every repository is a maintenance nightmare. Instead, we use the <strong>Hub-and-Spoke Model</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>       [ Central SDS Repo (Hub) ]
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>         ├── sds-cli (Python Package)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>         ├── Standard Templates
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>         └── pre-commit Hooks
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                    │
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        ┌───────────┴───────────┐
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        ▼                       ▼
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>[ Project A (Spoke) ]   [ Project B (Spoke) ]
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  ├── .sds.harness.yaml   ├── .sds.harness.yaml
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  └── specs/              ├── specs/
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>                          └── src/
+</span></code></pre></div>
+<ul>
+<li><strong>Zero Harness Bloat</strong>: Spoke repositories do not check in any tooling engine files. Their git trees remain 100% clean and professional.</li>
+<li><strong>Clean Upgrades</strong>: The core is updated centrally. Projects specify their version in standard dev packages (e.g., <code>.pre-commit-config.yaml</code>).</li>
+</ul>
+<h3 id="3-separation-of-review-and-durable-workspace">3. Separation of Review and Durable Workspace<a class="headerlink" href="#3-separation-of-review-and-durable-workspace" title="Permanent link">&para;</a></h3>
+<p>To avoid cluttering Git with research and temporary files, SDS enforces a strict separation:</p>
+<ul>
+<li><strong><code>specs_review/</code> (Temporary drafting kitchen)</strong>: Local-only, gitignored directory. This is where you put raw brainstorming, execution plans, technical assessments, diagnostic logs, and verification runtimes.</li>
+<li><strong><code>specs/</code> (Durable dining room)</strong>: Authoritative, git-tracked directory. Once a design proposal is accepted, the final agreed-upon conclusions are promoted into <code>specs/</code> as clean <code>spec.md</code>, <code>design.md</code> and <code>_context/</code> files. These documents must remain usable after the review workspace is deleted: no links, reference definitions, HTML or bare/escaped paths to temporary artifacts.</li>
+</ul>
+<hr />
+<h2 id="heritage-inspiration-the-future-of-software-delivery">💖 Heritage &amp; Inspiration: The Future of Software Delivery<a class="headerlink" href="#heritage-inspiration-the-future-of-software-delivery" title="Permanent link">&para;</a></h2>
+<p>Spec-Defined Software (SDS) is proud of its roots and is heavily inspired by and evolved from GitHub's <a href="https://github.com/github/spec-kit">spec-kit</a> methodology. </p>
+<p>While <code>spec-kit</code> pioneered the spec-driven development pattern and introduced rigorous specification validation checks, <strong>the core breakthrough of SDS is organizing the entire specification ecosystem as the future form of software requirement delivery.</strong> </p>
+<p>Rather than just checking text formatting, SDS organizes specifications, boundaries, and designs into a living, multi-dimensional human-AI collaborative environment. By formalizing requirements into traceable business contracts, SDS turns requirements directly into the active, self-correcting structural blueprint of the running software.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

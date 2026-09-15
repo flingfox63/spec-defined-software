@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://sds.lin63.com/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/philosophy/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/philosophy/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/philosophy/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/roadmap/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/roadmap/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/workflow/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/workflow/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/workflow/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/cli/installation/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/cli/installation/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/cli/installation/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/cli/pre-commit/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/cli/pre-commit/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/cli/pre-commit/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/ecosystem/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/ecosystem/architect/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/architect/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/architect/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/ecosystem/coder/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/coder/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/coder/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/ecosystem/ideator/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/ideator/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/ideator/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/ecosystem/ops/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/ops/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/ecosystem/qa/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/qa/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/qa/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/reference/playbook/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/reference/playbook/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/reference/playbook/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/reference/templates/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/reference/templates/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/reference/templates/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/philosophy/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/philosophy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/philosophy/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/roadmap/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/roadmap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/roadmap/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/workflow/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/workflow/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/workflow/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/cli/installation/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/cli/installation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/cli/installation/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/cli/pre-commit/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/cli/pre-commit/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/cli/pre-commit/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/ecosystem/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/ecosystem/architect/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/architect/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/architect/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/ecosystem/coder/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/coder/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/coder/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/ecosystem/ideator/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/ideator/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/ideator/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/ecosystem/ops/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/ops/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/ecosystem/qa/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/ecosystem/qa/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/ecosystem/qa/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/reference/playbook/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/reference/playbook/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/reference/playbook/"/>
+    </url>
+    <url>
+        <loc>https://sds.lin63.com/zh/reference/templates/</loc>
+        <lastmod>2026-09-15</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://sds.lin63.com/zh/reference/templates/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sds.lin63.com/reference/templates/"/>
+    </url>
+</urlset>

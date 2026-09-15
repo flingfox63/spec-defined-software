@@ -1,0 +1,17 @@
+/* 
+  SDS Premium Custom CSS
+  Forces Right-Side Table of Contents Heading to always render in English
+*/
+.md-sidebar--secondary .md-nav__title {
+  visibility: hidden;
+  position: relative;
+}
+
+.md-sidebar--secondary .md-nav__title::after {
+  content: "Table of contents";
+  visibility: visible;
+  position: absolute;
+  left: 0.8rem;
+  top: 0;
+  font-weight: 700;
+}
